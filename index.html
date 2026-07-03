@@ -1,0 +1,1038 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>JAMM Pad — Joint Art &amp; Modeling Machine</title>
+<meta name="theme-color" content="#3e4a1d">
+<meta name="description" content="JAMM Pad — retro paint studio that works 100% offline. Draw with mouse, touch, or a game controller.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23b9bd9e'/%3E%3Crect x='1' y='1' width='14' height='3' fill='%233e4a1d'/%3E%3Crect x='1.5' y='5' width='13' height='9.5' fill='%23ffffff'/%3E%3Cpath d='M3 11c2-5 4 3 6-3s2-1 4-2' stroke='%23ed1c24' stroke-width='1.6' fill='none'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#4a4f2d;color:#000;
+ font-family:Tahoma,'MS Sans Serif',Verdana,sans-serif;font-size:11px;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+#app{height:100dvh;padding:8px;display:flex}
+#win{flex:1;display:flex;flex-direction:column;min-height:0;background:#b9bd9e;
+ border:2px solid;border-color:#ecefd6 #50552f #50552f #ecefd6;box-shadow:1px 1px 0 #000}
+.titlebar{height:24px;flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:0 3px;
+ background:linear-gradient(90deg,#3e4a1d,#8a9a45);color:#ecefd6}
+.titlebar .tname{font-weight:700;font-size:11px;letter-spacing:.2px}
+.titlebar .tsub{font-size:10px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.titlebar .tsp{flex:1}
+.tb{width:18px;height:16px;display:grid;place-items:center;background:#b9bd9e;color:#000;font-size:9px;font-weight:700;
+ border:1px solid;border-color:#ecefd6 #50552f #50552f #ecefd6;cursor:default}
+button{font:inherit;color:#000;background:#b9bd9e;border:2px solid;border-color:#ecefd6 #50552f #50552f #ecefd6;
+ padding:0 8px;height:26px;min-width:26px;cursor:pointer}
+button:active{border-color:#50552f #ecefd6 #ecefd6 #50552f}
+button.on{border-color:#50552f #ecefd6 #ecefd6 #50552f;background:#d6dab8}
+button.act.on{border-color:#50552f #ecefd6 #ecefd6 #50552f;background:#d6dab8}
+.bar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:4px 6px;flex-wrap:wrap;border-bottom:2px groove #ecefd6}
+.grp{display:flex;align-items:center;gap:4px}
+.grp .lab{font-size:10px;color:#000}
+.sp{flex:1}
+input[type=range]{width:90px;height:22px;accent-color:#3e4a1d}
+input[type=color]{width:30px;height:24px;border:2px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;background:#b9bd9e;padding:1px;cursor:pointer}
+.num{font-size:10px;min-width:24px;text-align:right}
+#mid{flex:1;display:flex;min-height:0}
+#toolbox{width:116px;flex:0 0 auto;padding:5px;display:flex;flex-direction:column;gap:5px;border-right:2px groove #ecefd6;overflow-y:auto}
+.boxlab{font-size:10px;font-weight:700;padding:1px 2px}
+#tools{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+#styles{display:grid;grid-template-columns:1fr;gap:3px;margin-top:2px}
+#tools button{height:24px;padding:0 2px;font-size:10px}
+#stage{flex:1;position:relative;touch-action:none;min-width:0;overflow:hidden;background:#8c906f;
+ border:2px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;margin:5px}
+#board{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#zoomTag{position:absolute;left:8px;top:8px;background:#b9bd9e;border:1px solid;border-color:#ecefd6 #50552f #50552f #ecefd6;padding:2px 6px;font-size:10px;pointer-events:none}
+.pill{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;background:#f7f9dd;color:#000;
+ border:1px solid #000;padding:4px 10px;font-size:11px;pointer-events:none;opacity:0;transition:.2s;max-width:90%;text-align:center;z-index:5}
+.pill.show{opacity:1}.pill b{color:#3e4a1d}
+.gp{position:absolute;left:8px;bottom:8px;background:#f7f9dd;border:1px solid #000;padding:4px 8px;font-size:10px;pointer-events:none;display:none}
+.gp.show{display:block}.gp b{color:#3e4a1d}
+#polyDone{position:absolute;right:10px;bottom:10px;height:30px;font-weight:700;display:none;z-index:5}
+#polyDone.show{display:block}
+#drawer{width:240px;flex:0 0 auto;border-left:2px groove #ecefd6;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:8px}
+#drawer.hide{display:none}
+.sec{border:2px groove #ecefd6;padding:6px;background:#b9bd9e}
+.sec h3{margin:-14px 0 6px 4px;font-size:10px;font-weight:700;background:#b9bd9e;display:inline-flex;gap:6px;align-items:center;padding:0 4px}
+.row{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.row+.row{margin-top:5px}
+.mini{height:22px;min-width:22px;padding:0 6px;font-size:10px}
+.layer,.proj{display:flex;align-items:center;gap:5px;padding:3px;border:1px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;margin-bottom:4px;background:#ecefd6;cursor:pointer}
+.layer.sel{background:#3e4a1d;color:#ecefd6}
+.layer .vis{width:18px;height:18px;flex:0 0 auto;display:grid;place-items:center;border:1px solid #50552f;background:#ecefd6;color:#000;font-size:10px}
+.layer .nm,.proj .nm{flex:1;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layer .th{width:30px;height:22px;flex:0 0 auto;border:1px solid #50552f;background:#ecefd6 center/cover}
+.proj .th{width:36px;height:26px;border:1px solid #50552f;background:#ecefd6 center/cover;flex:0 0 auto}
+input[type=text]{flex:1;min-width:0;background:#ecefd6;border:2px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;color:#000;font:inherit;height:22px;padding:0 4px}
+.hintline{font-size:9px;color:#50552f;line-height:1.4;margin-top:3px}
+#colorbar{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:4px 6px;border-top:2px groove #ecefd6}
+#swatches{display:flex;gap:2px;flex-wrap:wrap}
+.sw{width:20px;height:20px;border:2px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;cursor:pointer;flex:0 0 auto}
+.sw.on{border-color:#000 #000 #000 #000;outline:1px dotted #ecefd6;outline-offset:-4px}
+#status{flex:0 0 auto;display:flex;gap:3px;padding:3px 5px}
+#status .cell{border:1px solid;border-color:#50552f #ecefd6 #ecefd6 #50552f;padding:2px 8px;font-size:10px;background:#b9bd9e}
+#status .grow{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:50;display:none;align-items:center;justify-content:center;padding:16px}
+#overlay.show{display:flex}
+.ov-card{background:#b9bd9e;border:2px solid;border-color:#ecefd6 #50552f #50552f #ecefd6;box-shadow:2px 2px 0 #000;max-width:760px;width:100%;max-height:88vh;overflow:auto;padding:0 0 12px}
+.ov-title{height:24px;display:flex;align-items:center;padding:0 6px;background:linear-gradient(90deg,#3e4a1d,#8a9a45);color:#ecefd6;font-weight:700;margin-bottom:10px}
+.ov-body{padding:0 14px}
+.ov-sub{font-size:10px;color:#50552f;margin-bottom:10px}
+.ov-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ov-cols h4{margin:0 0 4px;font-size:10px;font-weight:700;color:#3e4a1d;text-transform:uppercase}
+.ov-cols ul{margin:0;padding:0;list-style:none;font-size:10px;color:#202020;line-height:1.7}
+.ov-cols b{color:#000}
+#ovClose{margin:12px 14px 0}
+@media(max-width:760px){
+ .ov-cols{grid-template-columns:1fr}
+ #drawer{position:absolute;right:8px;top:60px;bottom:60px;z-index:20;box-shadow:2px 2px 0 #000;border:2px solid;border-color:#ecefd6 #50552f #50552f #ecefd6}
+ .bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.bar::-webkit-scrollbar{display:none}
+ #toolbox{width:64px}#tools{grid-template-columns:1fr}
+ input[type=range]{width:70px}
+}
+</style></head><body>
+<div id="app">
+<div id="win">
+<div class="titlebar"><span class="tname">JAMM Pad</span><span class="tsub">- untitled.jam — Joint Art &amp; Modeling Machine</span><span class="tsp"></span><span class="tb">_</span><span class="tb">&#9633;</span><span class="tb">X</span></div>
+<div class="bar">
+<div class="grp"><span class="lab">Size</span><input type="range" id="size" min="1" max="120" value="8"><span class="num" id="sizeN">8</span></div>
+<div class="grp"><span class="lab">Flow</span><input type="range" id="opacity" min="3" max="100" value="100"><span class="num" id="opacityN">100</span></div>
+<div class="grp"><span class="lab">Symmetry</span><input type="range" id="seg" min="1" max="16" value="1"><span class="num" id="segN">1</span><button id="mirror" class="act mini">Mirror</button></div>
+<div class="grp"><button id="glow" class="act mini">Glow</button><button id="sketch" class="act mini">Sketch</button><button id="rainbow" class="act mini">Rainbow</button></div>
+<span class="sp"></span>
+<div class="grp"><button id="undo" class="mini">Undo</button><button id="redo" class="mini">Redo</button><button id="save" class="mini">Save PNG</button><button id="dlApp" class="mini" title="Save this entire app as a single HTML file that runs without internet">Download App</button><button id="ctrlBtn" class="mini">Controls</button><button id="panelBtn" class="act mini on">Panel</button></div>
+</div>
+<div id="mid">
+<div id="toolbox"><div class="boxlab">Tools</div><div id="tools"></div>
+<div id="stylesWrap"><div class="boxlab">Style</div><div id="styles"></div></div></div>
+<div id="stage">
+<canvas id="board"></canvas>
+<div id="zoomTag">100%</div>
+<div class="pill" id="pill"></div>
+<div class="gp" id="gpinfo"></div>
+<button id="polyDone">Finish shape</button>
+</div>
+<div id="drawer">
+<div class="sec"><h3>Layers <button id="addLayer" class="mini">+</button></h3>
+<div id="layerList"></div>
+<div class="row"><button id="dnLayer" class="mini">&#9660;</button><button id="upLayer" class="mini">&#9650;</button><button id="dupLayer" class="mini">Dup</button><button id="delLayer" class="mini">Del</button></div>
+<div class="row"><span class="lab">Opacity</span><input type="range" id="layerOpacity" min="0" max="100" value="100"></div>
+</div>
+<div class="sec"><h3>View</h3>
+<div class="row"><button id="zoomOut" class="mini">&#8722;</button><button id="zoomFit" class="mini">Fit</button><button id="zoom100" class="mini">100%</button><button id="zoomIn" class="mini">+</button></div>
+<div class="hintline">Scroll = zoom. Space-drag or two fingers = pan.</div>
+</div>
+<div class="sec"><h3>Reference</h3>
+<div class="row"><button id="refLoad" class="mini">Load image</button><button id="refToggle" class="mini act on">Show</button><button id="refClear" class="mini">Clear</button></div>
+<div class="row"><span class="lab">Opacity</span><input type="range" id="refOpacity" min="0" max="100" value="55"></div>
+<input type="file" id="refFile" accept="image/*" style="display:none">
+</div>
+<div class="sec"><h3>Timelapse <button id="recToggle" class="mini act on">Rec</button></h3>
+<div class="row"><button id="playReplay" class="mini">Play</button><button id="clearReplay" class="mini">Reset</button><span class="num" id="frameN">0</span></div>
+<div class="hintline">Records a frame each stroke. Play shows the build-up.</div>
+</div>
+<div class="sec"><h3>Image</h3>
+<div class="row"><button id="flipH" class="mini">Flip H</button><button id="flipV" class="mini">Flip V</button><button id="rot180" class="mini">Rot 180</button><button id="invert" class="mini">Invert</button></div>
+<div class="hintline">Classic image ops on the active layer. Select tool: drag a box, drag inside to move, Delete to cut, Enter to commit.</div>
+</div>
+<div class="sec"><h3>Effects</h3>
+<div class="row"><button id="fxBlur" class="mini">Blur</button><button id="fxPixel" class="mini">Pixelate</button><button id="fxGray" class="mini">Gray</button><button id="fxSepia" class="mini">Sepia</button></div>
+<div class="row"><button id="fxLight" class="mini">Lighter</button><button id="fxDark" class="mini">Darker</button></div>
+<div class="hintline">Applies to the active layer. GFill tool sweeps Left color to Right color. Ctrl+C / Ctrl+V copy and paste a selection.</div>
+</div>
+<div class="sec"><h3>Projects</h3>
+<div class="row"><input type="text" id="projName" placeholder="Artwork name"><button id="saveProj" class="mini">Save</button></div>
+<div id="projList" style="margin-top:6px"></div>
+<div class="row"><button id="newDoc" class="mini">New</button><button id="clearAll" class="mini">Clear layer</button></div>
+</div>
+</div>
+</div>
+<div id="colorbar"><span class="lab" style="font-size:9px">L</span><input type="color" id="color" value="#000000"><span class="lab" style="font-size:9px">R</span><input type="color" id="color2" value="#ffffff" title="Right-click / right-drag color"><span id="swatches"></span></div>
+<div id="status"><span class="cell" id="statTool">Pen</span><span class="cell" id="statXY">0, 0</span><span class="cell grow">JAMM Pad — Joint Art and Modeling Machine. Press Controls (or H) for help.</span></div>
+</div>
+</div>
+<div id="overlay"><div class="ov-card">
+<div class="ov-title">JAMM Pad — Controls</div>
+<div class="ov-body">
+<div class="ov-sub">Joint Art &amp; Modeling Machine. Draw with a game controller, mouse + keyboard, or touch.</div>
+<div class="ov-cols">
+<div><h4>Game controller</h4><ul>
+<li><b>Left stick</b> move cursor</li>
+<li><b>R2 / Cross (A)</b> draw</li>
+<li><b>Right stick up/down</b> brush size</li>
+<li><b>L1 / R1</b> change tool</li>
+<li><b>Square (X)</b> next color</li>
+<li><b>Triangle (Y)</b> glow on/off</li>
+<li><b>Circle (B)</b> undo</li>
+<li><b>R3</b> sketch style</li>
+<li><b>D-pad up/down</b> symmetry</li>
+<li><b>D-pad left/right</b> mirror / rainbow</li>
+<li><b>Options</b> clear layer</li>
+<li><b>Touchpad</b> save PNG</li>
+</ul></div>
+<div><h4>Mouse + keyboard</h4><ul>
+<li><b>Drag</b> draw</li>
+<li><b>Ctrl+Z / Ctrl+Y</b> undo / redo</li>
+<li><b>[ and ]</b> brush size</li>
+<li><b>Scroll</b> zoom, <b>Space-drag</b> pan</li>
+<li><b>Enter</b> finish polygon</li>
+<li><b>H</b> this help</li>
+</ul></div>
+<div><h4>Touch</h4><ul>
+<li><b>One finger</b> draw</li>
+<li><b>Two fingers</b> pan + pinch zoom</li>
+<li><b>Finish shape</b> button for polygons</li>
+<li>Open the <b>Panel</b> for layers, fill, projects</li>
+</ul></div>
+</div>
+</div>
+<button id="ovClose" class="mini">Close</button>
+</div></div>
+
+<script>
+/* ============================================================
+   JAMM Pad — single-file rebuild (no external dependencies)
+   Reverse-engineered from the original markup + controls help.
+   Replaces: rough.js, vd-core.js, vd-draw.js, vd-ui.js, vd-help.js
+   ============================================================ */
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var board=$("#board"), stage=$("#stage"), bctx=board.getContext("2d");
+
+/* ---------- document / layers ---------- */
+var DOC_W=1280, DOC_H=800;
+var layers=[];           // {canvas,ctx,name,visible,opacity}
+var active=0;
+var preview=document.createElement("canvas");           // live shape preview
+var pctx=preview.getContext("2d");
+
+function makeLayer(name){
+  var c=document.createElement("canvas"); c.width=DOC_W; c.height=DOC_H;
+  return {canvas:c, ctx:c.getContext("2d"), name:name, visible:true, opacity:1};
+}
+function curLayer(){ return layers[active]; }
+
+function newDoc(w,h){
+  DOC_W=w||DOC_W; DOC_H=h||DOC_H;
+  preview.width=DOC_W; preview.height=DOC_H;
+  layers=[ makeLayer("Layer 1") ];
+  active=0; undoStack=[]; redoStack=[]; frames=[]; selection=null; clipboard=null;
+  renderLayerList(); fitView(); requestRender(); updateFrameN();
+}
+
+/* ---------- view (zoom / pan) ---------- */
+var view={scale:1, x:0, y:0};
+function fitView(){
+  var r=stage.getBoundingClientRect();
+  var s=Math.min(r.width/DOC_W, r.height/DOC_H)*0.95;
+  view.scale=s;
+  view.x=(r.width-DOC_W*s)/2;
+  view.y=(r.height-DOC_H*s)/2;
+  updateZoomTag(); requestRender();
+}
+function setScale(ns, cx, cy){
+  var r=stage.getBoundingClientRect();
+  if(cx==null){ cx=r.width/2; cy=r.height/2; }
+  ns=Math.max(0.05, Math.min(32, ns));
+  // keep point under cursor stable
+  var dx=(cx-view.x)/view.scale, dy=(cy-view.y)/view.scale;
+  view.scale=ns;
+  view.x=cx-dx*ns; view.y=cy-dy*ns;
+  updateZoomTag(); requestRender();
+}
+function updateZoomTag(){ $("#zoomTag").textContent=Math.round(view.scale*100)+"%"; }
+function screenToDoc(sx,sy){
+  var r=stage.getBoundingClientRect();
+  return { x:(sx-r.left-view.x)/view.scale, y:(sy-r.top-view.y)/view.scale };
+}
+
+/* ---------- render loop ---------- */
+var rafPending=false;
+function requestRender(){ if(!rafPending){ rafPending=true; requestAnimationFrame(render);} }
+function sizeBoard(){
+  var r=stage.getBoundingClientRect();
+  var dpr=window.devicePixelRatio||1;
+  board.width=Math.max(1,Math.round(r.width*dpr));
+  board.height=Math.max(1,Math.round(r.height*dpr));
+  board.style.width=r.width+"px"; board.style.height=r.height+"px";
+  bctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function render(){
+  rafPending=false;
+  var r=stage.getBoundingClientRect();
+  bctx.setTransform((window.devicePixelRatio||1),0,0,(window.devicePixelRatio||1),0,0);
+  bctx.clearRect(0,0,r.width,r.height);
+  bctx.save();
+  bctx.translate(view.x,view.y); bctx.scale(view.scale,view.scale);
+  // paper
+  bctx.fillStyle="#ffffff"; bctx.fillRect(0,0,DOC_W,DOC_H);
+  // reference under everything but paper? draw faint over paper
+  if(refImg && refShow){ bctx.globalAlpha=refOpacity; bctx.drawImage(refImg,0,0,DOC_W,DOC_H); bctx.globalAlpha=1; }
+  // layers bottom->top
+  for(var i=0;i<layers.length;i++){
+    var L=layers[i]; if(!L.visible) continue;
+    bctx.globalAlpha=L.opacity;
+    bctx.drawImage(L.canvas,0,0);
+    if(i===active && previewActive){ bctx.drawImage(preview,0,0); }
+    bctx.globalAlpha=1;
+  }
+  // selection marquee
+  if(selection){
+    bctx.save();
+    bctx.lineWidth=1/view.scale; bctx.strokeStyle="#000";
+    bctx.setLineDash([4/view.scale,3/view.scale]);
+    bctx.strokeRect(selection.x,selection.y,selection.w,selection.h);
+    if(selection.float){ bctx.drawImage(selection.float,selection.x,selection.y); }
+    bctx.restore();
+  }
+  // polygon in-progress
+  if(poly.length){
+    bctx.save(); bctx.strokeStyle=color1; bctx.lineWidth=Math.max(1,sizeV)/1;
+    bctx.beginPath(); bctx.moveTo(poly[0].x,poly[0].y);
+    for(var p=1;p<poly.length;p++) bctx.lineTo(poly[p].x,poly[p].y);
+    if(polyHover) bctx.lineTo(polyHover.x,polyHover.y);
+    bctx.stroke(); bctx.restore();
+  }
+  // gamepad cursor
+  if(gpCursorShow){
+    bctx.save(); bctx.strokeStyle="#000"; bctx.lineWidth=1/view.scale;
+    var rad=Math.max(sizeV/2,4);
+    bctx.beginPath(); bctx.arc(gpCursor.x,gpCursor.y,rad,0,7); bctx.stroke();
+    bctx.beginPath(); bctx.moveTo(gpCursor.x-rad-3/view.scale,gpCursor.y); bctx.lineTo(gpCursor.x+rad+3/view.scale,gpCursor.y);
+    bctx.moveTo(gpCursor.x,gpCursor.y-rad-3/view.scale); bctx.lineTo(gpCursor.x,gpCursor.y+rad+3/view.scale); bctx.stroke();
+    bctx.restore();
+  }
+  bctx.restore();
+}
+
+/* ---------- tools & brush state ---------- */
+var TOOLS=["Pen","Eraser","Line","Rect","Ellipse","Polygon","Fill","GFill","Pick","Spray","Select"];
+var STYLES=["Round","Flat","Marker","Pixel"];
+var tool="Pen", style="Round";
+var sizeV=8, flowV=1, segV=1, mirror=false, glow=false, sketch=false, rainbow=false;
+var color1="#000000", color2="#ffffff";
+var rainbowHue=0;
+
+function buildTools(){
+  var t=$("#tools"); t.innerHTML="";
+  TOOLS.forEach(function(name){
+    var b=document.createElement("button"); b.textContent=name; b.dataset.tool=name;
+    if(name===tool) b.classList.add("on");
+    b.onclick=function(){ setTool(name); };
+    t.appendChild(b);
+  });
+  var s=$("#styles"); s.innerHTML="";
+  STYLES.forEach(function(name){
+    var b=document.createElement("button"); b.textContent=name; b.dataset.style=name; b.className="mini";
+    if(name===style) b.classList.add("on");
+    b.onclick=function(){ style=name; buildTools(); pill("Style: "+name); };
+    s.appendChild(b);
+  });
+}
+function setTool(name){
+  tool=name; commitSelection(); poly=[]; polyHover=null;
+  $("#statTool").textContent=name;
+  $("#polyDone").classList.toggle("show", name==="Polygon");
+  buildTools(); requestRender();
+  pill("Tool: <b>"+name+"</b>");
+}
+
+/* ---------- color / swatches ---------- */
+var SWATCHES=["#000000","#ffffff","#7f7f7f","#c3c3c3","#880015","#ed1c24","#ff7f27","#fff200",
+ "#22b14c","#00a2e8","#3f48cc","#a349a4","#b97a57","#ffaec9","#ffc90e","#b5e61d","#99d9ea","#7092be"];
+function buildSwatches(){
+  var w=$("#swatches"); w.innerHTML="";
+  SWATCHES.forEach(function(c){
+    var d=document.createElement("div"); d.className="sw"; d.style.background=c; d.dataset.c=c;
+    if(c.toLowerCase()===color1.toLowerCase()) d.classList.add("on");
+    d.onclick=function(){ setColor1(c); };
+    d.oncontextmenu=function(e){ e.preventDefault(); setColor2(c); };
+    w.appendChild(d);
+  });
+}
+function setColor1(c){ color1=c; $("#color").value=c; buildSwatches(); }
+function setColor2(c){ color2=c; $("#color2").value=c; }
+function nextColor(){
+  var i=SWATCHES.map(function(s){return s.toLowerCase();}).indexOf(color1.toLowerCase());
+  setColor1(SWATCHES[(i+1)%SWATCHES.length]);
+  pill("Color "+color1);
+}
+
+/* ---------- undo / redo (active-layer pixel snapshots) ---------- */
+var undoStack=[], redoStack=[], UNDO_MAX=50;
+function snapshot(){
+  try{
+    return {layer:active, data:curLayer().ctx.getImageData(0,0,DOC_W,DOC_H)};
+  }catch(e){ return null; }
+}
+function pushUndo(){
+  var s=snapshot(); if(!s) return;
+  undoStack.push(s); if(undoStack.length>UNDO_MAX) undoStack.shift();
+  redoStack.length=0;
+}
+function undo(){
+  if(!undoStack.length){ pill("Nothing to undo"); return; }
+  var s=undoStack.pop();
+  var L=layers[s.layer]||curLayer();
+  redoStack.push({layer:s.layer, data:L.ctx.getImageData(0,0,DOC_W,DOC_H)});
+  L.ctx.putImageData(s.data,0,0);
+  active=s.layer; renderLayerList(); requestRender();
+}
+function redo(){
+  if(!redoStack.length){ pill("Nothing to redo"); return; }
+  var s=redoStack.pop();
+  var L=layers[s.layer]||curLayer();
+  undoStack.push({layer:s.layer, data:L.ctx.getImageData(0,0,DOC_W,DOC_H)});
+  L.ctx.putImageData(s.data,0,0);
+  active=s.layer; renderLayerList(); requestRender();
+}
+
+/* ---------- drawing primitives with symmetry ---------- */
+function symPoints(p){
+  // returns array of transformed points around doc center for current symmetry/mirror
+  var out=[], cx=DOC_W/2, cy=DOC_H/2;
+  var n=Math.max(1,segV);
+  var dx=p.x-cx, dy=p.y-cy;
+  for(var k=0;k<n;k++){
+    var a=k*2*Math.PI/n, ca=Math.cos(a), sa=Math.sin(a);
+    out.push({x:cx+dx*ca-dy*sa, y:cy+dx*sa+dy*ca});
+    if(mirror){
+      var mdx=-dx; // mirror across vertical axis then rotate
+      out.push({x:cx+mdx*ca-dy*sa, y:cy+mdx*sa+dy*ca});
+    }
+  }
+  return out;
+}
+function strokeColor(){
+  if(rainbow){ rainbowHue=(rainbowHue+6)%360; return "hsl("+rainbowHue+",90%,50%)"; }
+  return color1;
+}
+function applyBrush(ctx){
+  ctx.lineCap = style==="Flat"?"butt":"round";
+  ctx.lineJoin="round";
+}
+function drawSeg(ctx,a,b,col){
+  // draw a brush segment a->b on ctx using current style/glow/sketch
+  var w=sizeV;
+  ctx.save();
+  ctx.globalAlpha=flowV;
+  applyBrush(ctx);
+  if(glow){ ctx.shadowBlur=w*1.2; ctx.shadowColor=col; }
+  if(tool==="Eraser"){ ctx.globalCompositeOperation="destination-out"; ctx.strokeStyle="rgba(0,0,0,1)"; }
+  else ctx.strokeStyle=col;
+  if(style==="Marker"){ ctx.globalAlpha=flowV*0.55; }
+  if(style==="Pixel"){
+    // blocky stamp
+    var steps=Math.max(1,Math.hypot(b.x-a.x,b.y-a.y)/(w*0.5));
+    for(var i=0;i<=steps;i++){
+      var x=a.x+(b.x-a.x)*i/steps, y=a.y+(b.y-a.y)*i/steps;
+      ctx.fillStyle=(tool==="Eraser")?"rgba(0,0,0,1)":col;
+      ctx.fillRect(Math.round(x-w/2),Math.round(y-w/2),Math.max(1,Math.round(w)),Math.max(1,Math.round(w)));
+    }
+    ctx.restore(); return;
+  }
+  if(sketch){
+    // hand-drawn: a few jittered passes
+    for(var s=0;s<3;s++){
+      var j=w*0.12+1;
+      ctx.lineWidth=Math.max(1,w*(0.6+s*0.15));
+      ctx.globalAlpha=(glow?flowV:flowV)*(0.5-s*0.1);
+      ctx.beginPath();
+      ctx.moveTo(a.x+ (Math.random()-0.5)*j, a.y+(Math.random()-0.5)*j);
+      var mx=(a.x+b.x)/2+(Math.random()-0.5)*j*2, my=(a.y+b.y)/2+(Math.random()-0.5)*j*2;
+      ctx.quadraticCurveTo(mx,my,b.x+(Math.random()-0.5)*j,b.y+(Math.random()-0.5)*j);
+      ctx.stroke();
+    }
+    ctx.restore(); return;
+  }
+  ctx.lineWidth=w;
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  if(style==="Calligraphy"){}
+  ctx.restore();
+}
+function stampDot(ctx,p,col){ drawSeg(ctx,{x:p.x-0.01,y:p.y},{x:p.x,y:p.y},col); }
+
+function sprayAt(ctx,p,col){
+  ctx.save(); ctx.globalAlpha=flowV; ctx.fillStyle=col;
+  var n=Math.max(4,sizeV);
+  for(var i=0;i<n;i++){
+    var a=Math.random()*7, r=Math.random()*sizeV/2;
+    ctx.fillRect(p.x+Math.cos(a)*r, p.y+Math.sin(a)*r,1.2,1.2);
+  }
+  ctx.restore();
+}
+
+/* ---------- flood fill ---------- */
+function hexToRGBA(h){
+  h=h.replace("#",""); if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16),255];
+}
+function floodFill(ctx,x,y,col){
+  x=Math.floor(x); y=Math.floor(y);
+  if(x<0||y<0||x>=DOC_W||y>=DOC_H) return;
+  var img=ctx.getImageData(0,0,DOC_W,DOC_H), d=img.data;
+  var idx=(y*DOC_W+x)*4;
+  var tr=d[idx],tg=d[idx+1],tb=d[idx+2],ta=d[idx+3];
+  var fc=hexToRGBA(col);
+  if(tr===fc[0]&&tg===fc[1]&&tb===fc[2]&&ta===fc[3]) return;
+  var tol=32;
+  function match(i){ return Math.abs(d[i]-tr)<=tol&&Math.abs(d[i+1]-tg)<=tol&&Math.abs(d[i+2]-tb)<=tol&&Math.abs(d[i+3]-ta)<=tol; }
+  var stack=[[x,y]];
+  while(stack.length){
+    var pt=stack.pop(), px=pt[0], py=pt[1]; var i=(py*DOC_W+px)*4;
+    if(px<0||py<0||px>=DOC_W||py>=DOC_H||!match(i)) continue;
+    d[i]=fc[0]; d[i+1]=fc[1]; d[i+2]=fc[2]; d[i+3]=255;
+    stack.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
+  }
+  ctx.putImageData(img,0,0);
+}
+function gradientFill(ctx,a,b){
+  var g=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+  g.addColorStop(0,color1); g.addColorStop(1,color2);
+  ctx.save(); ctx.globalAlpha=flowV; ctx.fillStyle=g; ctx.fillRect(0,0,DOC_W,DOC_H); ctx.restore();
+}
+
+/* ---------- pointer drawing ---------- */
+var drawing=false, lastDoc=null, previewActive=false, startDoc=null;
+var spaceDown=false, panning=false, panStart=null;
+var poly=[], polyHover=null;
+var selection=null, clipboard=null, selDragging=false, selOff=null;
+
+function beginStroke(doc, rightBtn){
+  pushUndo();
+  drawing=true; lastDoc=doc; startDoc=doc;
+  var useCol = rightBtn? color2: strokeColor();
+  if(tool==="Pen"||tool==="Eraser"){
+    symPoints(doc).forEach(function(p){ stampDot(curLayer().ctx,p,useCol); });
+  } else if(tool==="Spray"){
+    symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,useCol); });
+  } else if(tool==="Fill"){
+    floodFill(curLayer().ctx, doc.x, doc.y, useCol); endStroke();
+  } else if(tool==="Pick"){
+    pickColor(doc); drawing=false; undoStack.pop();
+  } else if(["Line","Rect","Ellipse","GFill"].indexOf(tool)>=0){
+    previewActive=true;
+  } else if(tool==="Polygon"){
+    drawing=false; undoStack.pop();
+    poly.push(doc); requestRender();
+  } else if(tool==="Select"){
+    if(selection && doc.x>=selection.x && doc.x<=selection.x+selection.w && doc.y>=selection.y && doc.y<=selection.y+selection.h){
+      selDragging=true; selOff={x:doc.x-selection.x, y:doc.y-selection.y};
+      if(!selection.float) liftSelection();
+    } else {
+      commitSelection(); selection={x:doc.x,y:doc.y,w:0,h:0,float:null}; selDragging=false; startDoc=doc;
+    }
+    undoStack.pop();
+  }
+  requestRender();
+}
+function moveStroke(doc, rightBtn){
+  if(tool==="Select"){
+    if(selDragging && selection){ selection.x=doc.x-selOff.x; selection.y=doc.y-selOff.y; requestRender(); }
+    else if(selection && startDoc){
+      selection.x=Math.min(startDoc.x,doc.x); selection.y=Math.min(startDoc.y,doc.y);
+      selection.w=Math.abs(doc.x-startDoc.x); selection.h=Math.abs(doc.y-startDoc.y); requestRender();
+    }
+    return;
+  }
+  if(!drawing) return;
+  var useCol = rightBtn? color2: strokeColor();
+  if(tool==="Pen"||tool==="Eraser"){
+    var A=symPoints(lastDoc), B=symPoints(doc);
+    for(var i=0;i<A.length;i++) drawSeg(curLayer().ctx,A[i],B[i],useCol);
+    lastDoc=doc;
+  } else if(tool==="Spray"){
+    symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,useCol); }); lastDoc=doc;
+  } else if(previewActive){
+    pctx.clearRect(0,0,DOC_W,DOC_H);
+    drawShape(pctx, startDoc, doc, useCol, true);
+  }
+  requestRender();
+}
+function endStroke(rightBtn){
+  if(tool==="Select"){ selDragging=false; return; }
+  if(previewActive){
+    drawShape(curLayer().ctx, startDoc, lastHover||startDoc, rightBtn?color2:strokeColor(), false);
+    pctx.clearRect(0,0,DOC_W,DOC_H); previewActive=false;
+  }
+  if(drawing){ recordFrame(); }
+  drawing=false; lastDoc=null;
+  requestRender();
+}
+var lastHover=null;
+function drawShape(ctx,a,b,col,isPreview){
+  ctx.save(); ctx.globalAlpha=flowV; applyBrush(ctx);
+  if(glow){ ctx.shadowBlur=sizeV*1.2; ctx.shadowColor=col; }
+  ctx.lineWidth=sizeV; ctx.strokeStyle=col; ctx.fillStyle=col;
+  if(tool==="Line"){ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+  else if(tool==="Rect"){ ctx.strokeRect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(b.x-a.x),Math.abs(b.y-a.y)); }
+  else if(tool==="Ellipse"){
+    ctx.beginPath();
+    ctx.ellipse((a.x+b.x)/2,(a.y+b.y)/2,Math.abs(b.x-a.x)/2,Math.abs(b.y-a.y)/2,0,0,7); ctx.stroke();
+  } else if(tool==="GFill"){
+    if(!isPreview) gradientFill(ctx,a,b);
+    else { ctx.globalAlpha=0.4; var g=ctx.createLinearGradient(a.x,a.y,b.x,b.y); g.addColorStop(0,color1); g.addColorStop(1,color2); ctx.fillStyle=g; ctx.fillRect(0,0,DOC_W,DOC_H); }
+  }
+  ctx.restore();
+}
+function finishPoly(){
+  if(poly.length>1){
+    pushUndo();
+    var ctx=curLayer().ctx; ctx.save(); ctx.globalAlpha=flowV; applyBrush(ctx);
+    if(glow){ ctx.shadowBlur=sizeV*1.2; ctx.shadowColor=color1; }
+    ctx.lineWidth=sizeV; ctx.strokeStyle=color1;
+    ctx.beginPath(); ctx.moveTo(poly[0].x,poly[0].y);
+    for(var i=1;i<poly.length;i++) ctx.lineTo(poly[i].x,poly[i].y);
+    ctx.closePath(); ctx.stroke(); ctx.restore(); recordFrame();
+  }
+  poly=[]; polyHover=null; requestRender();
+}
+function pickColor(doc){
+  var x=Math.floor(doc.x),y=Math.floor(doc.y);
+  if(x<0||y<0||x>=DOC_W||y>=DOC_H) return;
+  // sample composite
+  var tmp=document.createElement("canvas"); tmp.width=1; tmp.height=1; var tc=tmp.getContext("2d");
+  tc.fillStyle="#fff"; tc.fillRect(0,0,1,1);
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; tc.globalAlpha=layers[i].opacity; tc.drawImage(layers[i].canvas,-x,-y); }
+  var d=tc.getImageData(0,0,1,1).data;
+  var hex="#"+[d[0],d[1],d[2]].map(function(v){return ("0"+v.toString(16)).slice(-2);}).join("");
+  setColor1(hex); pill("Picked "+hex);
+}
+
+/* ---------- selection helpers ---------- */
+function liftSelection(){
+  if(!selection||selection.w<1||selection.h<1) return;
+  var fc=document.createElement("canvas"); fc.width=Math.round(selection.w); fc.height=Math.round(selection.h);
+  fc.getContext("2d").drawImage(curLayer().canvas, selection.x, selection.y, selection.w, selection.h, 0,0, selection.w, selection.h);
+  pushUndo();
+  curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  selection.float=fc;
+}
+function commitSelection(){
+  if(selection && selection.float){
+    pushUndo();
+    curLayer().ctx.drawImage(selection.float, selection.x, selection.y);
+  }
+  selection=null; requestRender();
+}
+function deleteSelection(){
+  if(!selection) return;
+  pushUndo();
+  if(!selection.float) curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  selection=null; recordFrame(); requestRender();
+}
+function copySelection(){
+  if(!selection) return;
+  var fc=document.createElement("canvas"); fc.width=Math.max(1,Math.round(selection.w)); fc.height=Math.max(1,Math.round(selection.h));
+  fc.getContext("2d").drawImage(selection.float||curLayer().canvas, selection.float?0:selection.x, selection.float?0:selection.y, selection.w,selection.h, 0,0,selection.w,selection.h);
+  clipboard=fc; pill("Copied");
+}
+function pasteClipboard(){
+  if(!clipboard){ pill("Clipboard empty"); return; }
+  setTool("Select");
+  selection={x:(DOC_W-clipboard.width)/2, y:(DOC_H-clipboard.height)/2, w:clipboard.width, h:clipboard.height, float:clipboard};
+  requestRender(); pill("Pasted — drag to place, Enter to commit");
+}
+
+/* ---------- effects & image ops (active layer) ---------- */
+function withLayerImage(fn){
+  pushUndo();
+  var ctx=curLayer().ctx, img=ctx.getImageData(0,0,DOC_W,DOC_H);
+  fn(img.data, img); ctx.putImageData(img,0,0); recordFrame(); requestRender();
+}
+function fxGray(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ var g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]; d[i]=d[i+1]=d[i+2]=g; } }); }
+function fxSepia(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ var r=d[i],g=d[i+1],b=d[i+2]; d[i]=Math.min(255,0.393*r+0.769*g+0.189*b); d[i+1]=Math.min(255,0.349*r+0.686*g+0.168*b); d[i+2]=Math.min(255,0.272*r+0.534*g+0.131*b);} }); }
+function fxInvert(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=255-d[i]; d[i+1]=255-d[i+1]; d[i+2]=255-d[i+2]; } }); }
+function fxLight(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=Math.min(255,d[i]+24); d[i+1]=Math.min(255,d[i+1]+24); d[i+2]=Math.min(255,d[i+2]+24);} }); }
+function fxDark(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=Math.max(0,d[i]-24); d[i+1]=Math.max(0,d[i+1]-24); d[i+2]=Math.max(0,d[i+2]-24);} }); }
+function fxBlur(){
+  pushUndo();
+  var ctx=curLayer().ctx;
+  var tmp=document.createElement("canvas"); tmp.width=DOC_W; tmp.height=DOC_H;
+  var t=tmp.getContext("2d"); t.filter="blur(3px)"; t.drawImage(curLayer().canvas,0,0);
+  ctx.clearRect(0,0,DOC_W,DOC_H); ctx.drawImage(tmp,0,0); recordFrame(); requestRender();
+}
+function fxPixel(){
+  pushUndo();
+  var ctx=curLayer().ctx, px=10;
+  var sw=Math.max(1,Math.round(DOC_W/px)), sh=Math.max(1,Math.round(DOC_H/px));
+  var tmp=document.createElement("canvas"); tmp.width=sw; tmp.height=sh; var t=tmp.getContext("2d");
+  t.imageSmoothingEnabled=false; t.drawImage(curLayer().canvas,0,0,sw,sh);
+  ctx.imageSmoothingEnabled=false; ctx.clearRect(0,0,DOC_W,DOC_H); ctx.drawImage(tmp,0,0,sw,sh,0,0,DOC_W,DOC_H);
+  ctx.imageSmoothingEnabled=true; recordFrame(); requestRender();
+}
+function imgOp(kind){
+  pushUndo();
+  var ctx=curLayer().ctx;
+  var tmp=document.createElement("canvas"); tmp.width=DOC_W; tmp.height=DOC_H;
+  tmp.getContext("2d").drawImage(curLayer().canvas,0,0);
+  ctx.save(); ctx.clearRect(0,0,DOC_W,DOC_H);
+  if(kind==="flipH"){ ctx.translate(DOC_W,0); ctx.scale(-1,1); }
+  else if(kind==="flipV"){ ctx.translate(0,DOC_H); ctx.scale(1,-1); }
+  else if(kind==="rot180"){ ctx.translate(DOC_W,DOC_H); ctx.scale(-1,-1); }
+  ctx.drawImage(tmp,0,0); ctx.restore(); recordFrame(); requestRender();
+}
+
+/* ---------- layers panel ---------- */
+function renderLayerList(){
+  var w=$("#layerList"); w.innerHTML="";
+  for(var i=layers.length-1;i>=0;i--){
+    (function(i){
+      var L=layers[i];
+      var row=document.createElement("div"); row.className="layer"+(i===active?" sel":"");
+      var vis=document.createElement("div"); vis.className="vis"; vis.textContent=L.visible?"◉":"◯";
+      vis.onclick=function(e){ e.stopPropagation(); L.visible=!L.visible; renderLayerList(); requestRender(); };
+      var nm=document.createElement("div"); nm.className="nm"; nm.textContent=L.name;
+      nm.ondblclick=function(e){ e.stopPropagation(); var n=prompt("Layer name",L.name); if(n){ L.name=n; renderLayerList(); } };
+      var th=document.createElement("div"); th.className="th";
+      try{ th.style.backgroundImage="url("+L.canvas.toDataURL()+")"; }catch(e){}
+      row.appendChild(vis); row.appendChild(nm); row.appendChild(th);
+      row.onclick=function(){ commitSelection(); active=i; $("#layerOpacity").value=Math.round(L.opacity*100); renderLayerList(); requestRender(); };
+      w.appendChild(row);
+    })(i);
+  }
+}
+function addLayer(){ commitSelection(); layers.splice(active+1,0,makeLayer("Layer "+(layers.length+1))); active++; renderLayerList(); requestRender(); }
+function dupLayer(){ commitSelection(); var L=makeLayer(curLayer().name+" copy"); L.ctx.drawImage(curLayer().canvas,0,0); L.opacity=curLayer().opacity; layers.splice(active+1,0,L); active++; renderLayerList(); requestRender(); }
+function delLayer(){ if(layers.length<=1){ pill("Need at least one layer"); return; } layers.splice(active,1); active=Math.max(0,active-1); renderLayerList(); requestRender(); }
+function moveLayer(dir){ var ni=active+dir; if(ni<0||ni>=layers.length) return; var t=layers[active]; layers[active]=layers[ni]; layers[ni]=t; active=ni; renderLayerList(); requestRender(); }
+
+/* ---------- reference ---------- */
+var refImg=null, refShow=true, refOpacity=0.55;
+function loadRef(file){
+  var url=URL.createObjectURL(file); var im=new Image();
+  im.onload=function(){ refImg=im; requestRender(); pill("Reference loaded"); };
+  im.src=url;
+}
+
+/* ---------- timelapse ---------- */
+var frames=[], recOn=true, playing=false;
+function recordFrame(){
+  if(!recOn) return;
+  var c=document.createElement("canvas"); c.width=Math.round(DOC_W/3); c.height=Math.round(DOC_H/3);
+  var x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height);
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.drawImage(layers[i].canvas,0,0,c.width,c.height); }
+  frames.push(c); updateFrameN();
+}
+function updateFrameN(){ $("#frameN").textContent=frames.length; }
+function playReplay(){
+  if(!frames.length){ pill("No frames recorded"); return; }
+  if(playing) return; playing=true; var i=0;
+  var r=stage.getBoundingClientRect();
+  function step(){
+    if(i>=frames.length){ playing=false; requestRender(); return; }
+    bctx.setTransform((window.devicePixelRatio||1),0,0,(window.devicePixelRatio||1),0,0);
+    bctx.clearRect(0,0,r.width,r.height);
+    bctx.save(); bctx.translate(view.x,view.y); bctx.scale(view.scale,view.scale);
+    bctx.fillStyle="#fff"; bctx.fillRect(0,0,DOC_W,DOC_H);
+    bctx.drawImage(frames[i],0,0,DOC_W,DOC_H); bctx.restore();
+    i++; setTimeout(function(){ requestAnimationFrame(step); }, 60);
+  }
+  step();
+}
+
+/* ---------- save PNG ---------- */
+function flatten(){
+  var c=document.createElement("canvas"); c.width=DOC_W; c.height=DOC_H; var x=c.getContext("2d");
+  x.fillStyle="#fff"; x.fillRect(0,0,DOC_W,DOC_H);
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.drawImage(layers[i].canvas,0,0); }
+  return c;
+}
+function savePNG(){
+  var name=($("#projName").value||"jammpad").replace(/[^\w\-]+/g,"_");
+  var a=document.createElement("a"); a.download=name+".png"; a.href=flatten().toDataURL("image/png"); a.click();
+  pill("Saved "+name+".png");
+}
+
+/* ---------- projects (localStorage) ---------- */
+var PKEY="jammpad.projects.v1";
+function getProjects(){ try{ return JSON.parse(localStorage.getItem(PKEY)||"[]"); }catch(e){ return []; } }
+function setProjects(p){ try{ localStorage.setItem(PKEY,JSON.stringify(p)); }catch(e){ pill("Save failed (storage full)"); } }
+function saveProject(){
+  var name=$("#projName").value||("Artwork "+new Date().toLocaleString());
+  var p=getProjects();
+  var rec={ name:name, w:DOC_W, h:DOC_H, thumb:flatten().toDataURL("image/png"),
+    layers:layers.map(function(L){ return {name:L.name,visible:L.visible,opacity:L.opacity,data:L.canvas.toDataURL("image/png")}; }) };
+  var ex=p.findIndex(function(q){return q.name===name;});
+  if(ex>=0) p[ex]=rec; else p.push(rec);
+  setProjects(p); renderProjects(); pill("Project saved: "+name);
+}
+function renderProjects(){
+  var w=$("#projList"); w.innerHTML=""; var p=getProjects();
+  if(!p.length){ w.innerHTML='<div class="hintline">No saved projects yet.</div>'; return; }
+  p.forEach(function(rec,idx){
+    var row=document.createElement("div"); row.className="proj";
+    var th=document.createElement("div"); th.className="th"; th.style.backgroundImage="url("+rec.thumb+")";
+    var nm=document.createElement("div"); nm.className="nm"; nm.textContent=rec.name;
+    var del=document.createElement("button"); del.className="mini"; del.textContent="Del";
+    del.onclick=function(e){ e.stopPropagation(); var pp=getProjects(); pp.splice(idx,1); setProjects(pp); renderProjects(); };
+    row.appendChild(th); row.appendChild(nm); row.appendChild(del);
+    row.onclick=function(){ loadProject(rec); };
+    w.appendChild(row);
+  });
+}
+function loadProject(rec){
+  DOC_W=rec.w; DOC_H=rec.h; preview.width=DOC_W; preview.height=DOC_H;
+  layers=[]; var pending=rec.layers.length;
+  rec.layers.forEach(function(ld,i){
+    var L=makeLayer(ld.name); L.visible=ld.visible; L.opacity=ld.opacity; layers[i]=L;
+    var im=new Image(); im.onload=function(){ L.ctx.drawImage(im,0,0); if(--pending===0){ active=0; undoStack=[];redoStack=[];frames=[];selection=null; renderLayerList(); fitView(); requestRender(); updateFrameN(); } }; im.src=ld.data;
+  });
+  $("#projName").value=rec.name; pill("Loaded "+rec.name);
+}
+
+/* ---------- pill / status ---------- */
+var pillT;
+function pill(html){ var p=$("#pill"); p.innerHTML=html; p.classList.add("show"); clearTimeout(pillT); pillT=setTimeout(function(){ p.classList.remove("show"); },1400); }
+
+/* ============================================================
+   INPUT: pointer / mouse / touch
+   ============================================================ */
+var activePointers=new Map(), pinchStart=null;
+board.addEventListener("contextmenu",function(e){ e.preventDefault(); });
+
+board.addEventListener("pointerdown",function(e){
+  board.setPointerCapture(e.pointerId);
+  activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(activePointers.size>=2){ drawing=false; previewActive=false; startPinch(); return; }
+  if(spaceDown){ panning=true; panStart={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y}; return; }
+  var doc=screenToDoc(e.clientX,e.clientY);
+  beginStroke(doc, e.button===2);
+});
+board.addEventListener("pointermove",function(e){
+  if(activePointers.has(e.pointerId)) activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  var doc=screenToDoc(e.clientX,e.clientY);
+  lastHover=doc; if(tool==="Polygon"&&poly.length){ polyHover=doc; requestRender(); }
+  $("#statXY").textContent=Math.round(doc.x)+", "+Math.round(doc.y);
+  if(activePointers.size>=2){ doPinch(); return; }
+  if(panning){ view.x=panStart.vx+(e.clientX-panStart.x); view.y=panStart.vy+(e.clientY-panStart.y); requestRender(); return; }
+  if(previewActive){ moveStroke(doc, e.buttons===2); }
+  else moveStroke(doc, e.buttons===2);
+});
+function up(e){
+  if(activePointers.has(e.pointerId)) activePointers.delete(e.pointerId);
+  if(activePointers.size<2) pinchStart=null;
+  if(panning){ panning=false; return; }
+  if(activePointers.size>=1) return;
+  endStroke(e.button===2);
+}
+board.addEventListener("pointerup",up);
+board.addEventListener("pointercancel",up);
+
+function startPinch(){
+  var pts=[...activePointers.values()];
+  pinchStart={ d:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),
+    cx:(pts[0].x+pts[1].x)/2, cy:(pts[0].y+pts[1].y)/2, scale:view.scale, vx:view.x, vy:view.y };
+}
+function doPinch(){
+  if(!pinchStart) { startPinch(); return; }
+  var pts=[...activePointers.values()]; if(pts.length<2) return;
+  var d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+  var cx=(pts[0].x+pts[1].x)/2, cy=(pts[0].y+pts[1].y)/2;
+  var r=stage.getBoundingClientRect();
+  // pan
+  view.x=pinchStart.vx+(cx-pinchStart.cx); view.y=pinchStart.vy+(cy-pinchStart.cy);
+  // zoom about center
+  var ns=pinchStart.scale*(d/pinchStart.d);
+  setScale(ns, cx-r.left, cy-r.top);
+}
+
+stage.addEventListener("wheel",function(e){
+  e.preventDefault();
+  var r=stage.getBoundingClientRect();
+  var f=e.deltaY<0?1.12:1/1.12;
+  setScale(view.scale*f, e.clientX-r.left, e.clientY-r.top);
+},{passive:false});
+
+/* ---------- keyboard ---------- */
+window.addEventListener("keydown",function(e){
+  var tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="textarea") return;
+  if(e.code==="Space"){ spaceDown=true; e.preventDefault(); return; }
+  if(e.ctrlKey||e.metaKey){
+    if(e.key==="z"){ e.preventDefault(); undo(); return; }
+    if(e.key==="y"){ e.preventDefault(); redo(); return; }
+    if(e.key==="c"){ e.preventDefault(); copySelection(); return; }
+    if(e.key==="v"){ e.preventDefault(); pasteClipboard(); return; }
+    if(e.key==="s"){ e.preventDefault(); savePNG(); return; }
+  }
+  if(e.key==="["){ setSize(sizeV-2); }
+  else if(e.key==="]"){ setSize(sizeV+2); }
+  else if(e.key==="Enter"){ if(tool==="Polygon") finishPoly(); else if(selection){ commitSelection(); } }
+  else if(e.key==="Delete"||e.key==="Backspace"){ if(selection){ e.preventDefault(); deleteSelection(); } }
+  else if(e.key==="h"||e.key==="H"){ toggleOverlay(); }
+});
+window.addEventListener("keyup",function(e){ if(e.code==="Space"){ spaceDown=false; panning=false; } });
+
+/* ---------- toolbar wiring ---------- */
+function setSize(v){ sizeV=Math.max(1,Math.min(120,Math.round(v))); $("#size").value=sizeV; $("#sizeN").textContent=sizeV; }
+$("#size").oninput=function(){ setSize(+this.value); };
+$("#opacity").oninput=function(){ flowV=(+this.value)/100; $("#opacityN").textContent=this.value; };
+$("#seg").oninput=function(){ segV=+this.value; $("#segN").textContent=this.value; };
+$("#mirror").onclick=function(){ mirror=!mirror; this.classList.toggle("on",mirror); pill("Mirror "+(mirror?"on":"off")); };
+$("#glow").onclick=function(){ glow=!glow; this.classList.toggle("on",glow); pill("Glow "+(glow?"on":"off")); };
+$("#sketch").onclick=function(){ sketch=!sketch; this.classList.toggle("on",sketch); pill("Sketch "+(sketch?"on":"off")); };
+$("#rainbow").onclick=function(){ rainbow=!rainbow; this.classList.toggle("on",rainbow); pill("Rainbow "+(rainbow?"on":"off")); };
+$("#undo").onclick=undo; $("#redo").onclick=redo; $("#save").onclick=savePNG;
+$("#ctrlBtn").onclick=toggleOverlay;
+$("#panelBtn").onclick=function(){ var d=$("#drawer"); d.classList.toggle("hide"); this.classList.toggle("on",!d.classList.contains("hide")); requestRender(); };
+$("#color").oninput=function(){ color1=this.value; buildSwatches(); };
+$("#color2").oninput=function(){ color2=this.value; };
+
+/* layers */
+$("#addLayer").onclick=addLayer; $("#dupLayer").onclick=dupLayer; $("#delLayer").onclick=delLayer;
+$("#upLayer").onclick=function(){ moveLayer(1); }; $("#dnLayer").onclick=function(){ moveLayer(-1); };
+$("#layerOpacity").oninput=function(){ curLayer().opacity=(+this.value)/100; renderLayerList(); requestRender(); };
+
+/* view */
+$("#zoomIn").onclick=function(){ setScale(view.scale*1.2); };
+$("#zoomOut").onclick=function(){ setScale(view.scale/1.2); };
+$("#zoom100").onclick=function(){ setScale(1); };
+$("#zoomFit").onclick=fitView;
+
+/* reference */
+$("#refLoad").onclick=function(){ $("#refFile").click(); };
+$("#refFile").onchange=function(){ if(this.files[0]) loadRef(this.files[0]); };
+$("#refToggle").onclick=function(){ refShow=!refShow; this.classList.toggle("on",refShow); requestRender(); };
+$("#refClear").onclick=function(){ refImg=null; requestRender(); };
+$("#refOpacity").oninput=function(){ refOpacity=(+this.value)/100; requestRender(); };
+
+/* timelapse */
+$("#recToggle").onclick=function(){ recOn=!recOn; this.classList.toggle("on",recOn); pill("Recording "+(recOn?"on":"off")); };
+$("#playReplay").onclick=playReplay;
+$("#clearReplay").onclick=function(){ frames=[]; updateFrameN(); pill("Timelapse reset"); };
+
+/* image ops */
+$("#flipH").onclick=function(){ imgOp("flipH"); };
+$("#flipV").onclick=function(){ imgOp("flipV"); };
+$("#rot180").onclick=function(){ imgOp("rot180"); };
+$("#invert").onclick=fxInvert;
+
+/* effects */
+$("#fxBlur").onclick=fxBlur; $("#fxPixel").onclick=fxPixel; $("#fxGray").onclick=fxGray;
+$("#fxSepia").onclick=fxSepia; $("#fxLight").onclick=fxLight; $("#fxDark").onclick=fxDark;
+
+/* projects */
+$("#saveProj").onclick=saveProject;
+$("#newDoc").onclick=function(){ if(confirm("Start a new blank document? Unsaved work is lost.")) newDoc(DOC_W,DOC_H); };
+$("#clearAll").onclick=function(){ pushUndo(); curLayer().ctx.clearRect(0,0,DOC_W,DOC_H); recordFrame(); requestRender(); };
+
+/* polygon finish + overlay */
+$("#polyDone").onclick=finishPoly;
+function toggleOverlay(){ $("#overlay").classList.toggle("show"); }
+$("#ovClose").onclick=toggleOverlay;
+$("#overlay").onclick=function(e){ if(e.target===this) toggleOverlay(); };
+
+/* ============================================================
+   GAMEPAD
+   ============================================================ */
+var gpCursor={x:DOC_W/2,y:DOC_H/2}, gpCursorShow=false, gpDrawing=false;
+var gpPrev={}, gpInfo=$("#gpinfo");
+function gpEdge(idx,pressed){ var was=gpPrev[idx]; gpPrev[idx]=pressed; return pressed&&!was; }
+window.addEventListener("gamepadconnected",function(e){ gpInfo.innerHTML="<b>Controller:</b> "+e.gamepad.id.slice(0,22); gpInfo.classList.add("show"); gpCursorShow=true; pill("Controller connected"); });
+window.addEventListener("gamepaddisconnected",function(){ gpInfo.classList.remove("show"); gpCursorShow=false; gpDrawing=false; });
+function pollGamepads(){
+  var pads=navigator.getGamepads?navigator.getGamepads():[];
+  var gp=null; for(var i=0;i<pads.length;i++){ if(pads[i]){ gp=pads[i]; break; } }
+  if(gp){
+    gpCursorShow=true;
+    var lx=gp.axes[0]||0, ly=gp.axes[1]||0, ry=gp.axes[3]||0;
+    var dz=0.18;
+    // move cursor in document pixels (constant on-screen speed regardless of zoom)
+    var spd=9/view.scale;
+    if(Math.abs(lx)>dz) gpCursor.x+=lx*spd;
+    if(Math.abs(ly)>dz) gpCursor.y+=ly*spd;
+    gpCursor.x=Math.max(0,Math.min(DOC_W,gpCursor.x)); gpCursor.y=Math.max(0,Math.min(DOC_H,gpCursor.y));
+    // right stick Y -> size
+    if(Math.abs(ry)>dz){ setSize(sizeV - ry*1.5); }
+    // buttons (standard mapping)
+    var b=gp.buttons.map(function(x){return x.pressed;});
+    var draw = (b[7]||b[0]); // R2 or Cross/A
+    if(draw && !gpDrawing){ gpDrawing=true; beginStrokeGP(); }
+    else if(draw && gpDrawing){ moveStrokeGP(); }
+    else if(!draw && gpDrawing){ gpDrawing=false; endStroke(false); }
+    if(gpEdge(4,b[4])) cycleTool(-1);     // L1
+    if(gpEdge(5,b[5])) cycleTool(1);      // R1
+    if(gpEdge(2,b[2])) nextColor();       // Square/X
+    if(gpEdge(3,b[3])){ glow=!glow; $("#glow").classList.toggle("on",glow); pill("Glow "+(glow?"on":"off")); } // Triangle/Y
+    if(gpEdge(1,b[1])) undo();            // Circle/B
+    if(gpEdge(11,b[11])){ sketch=!sketch; $("#sketch").classList.toggle("on",sketch); pill("Sketch "+(sketch?"on":"off")); } // R3
+    if(gpEdge(12,b[12])){ segV=Math.min(16,segV+1); $("#seg").value=segV; $("#segN").textContent=segV; pill("Symmetry "+segV); } // dpad up
+    if(gpEdge(13,b[13])){ segV=Math.max(1,segV-1); $("#seg").value=segV; $("#segN").textContent=segV; pill("Symmetry "+segV); } // dpad down
+    if(gpEdge(14,b[14])){ mirror=!mirror; $("#mirror").classList.toggle("on",mirror); pill("Mirror "+(mirror?"on":"off")); } // dpad left
+    if(gpEdge(15,b[15])){ rainbow=!rainbow; $("#rainbow").classList.toggle("on",rainbow); pill("Rainbow "+(rainbow?"on":"off")); } // dpad right
+    if(gpEdge(9,b[9])){ pushUndo(); curLayer().ctx.clearRect(0,0,DOC_W,DOC_H); requestRender(); pill("Layer cleared"); } // Options
+    if(gpEdge(17,b[17])) savePNG(); // touchpad (where present)
+    requestRender();
+  }
+  requestAnimationFrame(pollGamepads);
+}
+function cycleTool(dir){ var i=TOOLS.indexOf(tool); setTool(TOOLS[(i+dir+TOOLS.length)%TOOLS.length]); }
+function beginStrokeGP(){
+  var doc={x:gpCursor.x,y:gpCursor.y};
+  if(tool==="Polygon"){ poly.push(doc); requestRender(); return; }
+  if(tool==="Fill"){ pushUndo(); floodFill(curLayer().ctx,doc.x,doc.y,strokeColor()); recordFrame(); requestRender(); return; }
+  if(tool==="Pick"){ pickColor(doc); return; }
+  pushUndo(); drawing=true; lastDoc=doc; startDoc=doc;
+  if(["Line","Rect","Ellipse","GFill"].indexOf(tool)>=0){ previewActive=true; }
+  else if(tool==="Pen"||tool==="Eraser"){ symPoints(doc).forEach(function(p){ stampDot(curLayer().ctx,p,strokeColor()); }); }
+  else if(tool==="Spray"){ symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,strokeColor()); }); }
+}
+function moveStrokeGP(){
+  var doc={x:gpCursor.x,y:gpCursor.y};
+  if(!drawing){ return; }
+  if(tool==="Pen"||tool==="Eraser"){ var A=symPoints(lastDoc),B=symPoints(doc); for(var i=0;i<A.length;i++) drawSeg(curLayer().ctx,A[i],B[i],strokeColor()); lastDoc=doc; }
+  else if(tool==="Spray"){ symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,strokeColor()); }); }
+  else if(previewActive){ lastHover=doc; pctx.clearRect(0,0,DOC_W,DOC_H); drawShape(pctx,startDoc,doc,strokeColor(),true); }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  sizeBoard(); buildTools(); buildSwatches();
+  setSize(8); flowV=1; segV=1;
+  newDoc(DOC_W,DOC_H);
+  renderProjects();
+  setTool("Pen");
+  window.addEventListener("resize",function(){ sizeBoard(); requestRender(); });
+  // keep board sized to stage even when panel toggles
+  new ResizeObserver(function(){ sizeBoard(); requestRender(); }).observe(stage);
+  requestAnimationFrame(pollGamepads);
+  requestRender();
+}
+init();
+
+/* ============================================================
+   OFFLINE: service worker (when hosted) + one-click app download
+   The whole app is one self-contained HTML file. Hosted copies
+   cache themselves for offline use; the Download App button saves
+   the file so it runs from disk with no internet, forever.
+   ============================================================ */
+var isHTTP = location.protocol==="https:" || location.protocol==="http:";
+if(isHTTP && "serviceWorker" in navigator){
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+(function(){
+  var b=$("#dlApp"); if(!b) return;
+  if(!isHTTP){ b.style.display="none"; return; } /* already running from a local file */
+  b.onclick=function(){
+    fetch(location.href,{cache:"no-cache"}).then(function(r){
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return r.text();
+    }).then(function(t){
+      var a=document.createElement("a");
+      a.download="jamm-pad.html";
+      a.href=URL.createObjectURL(new Blob([t],{type:"text/html"}));
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); },4000);
+      pill("Saved <b>jamm-pad.html</b> — double-click it any time, no internet needed");
+    }).catch(function(){
+      pill("Download blocked — right-click the page and choose Save As instead");
+    });
+  };
+})();
+})();
+</script>
+</body></html>
