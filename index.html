@@ -1209,14 +1209,14 @@ function scMountains(ctx,P){
       var li=Math.max(6,lerp(58,15,t)+(P.pal.dark?-16:0));
       ctx.globalAlpha=1;ctx.fillStyle=hsl(P.pal.bg[1]+ (t*26),lerp(26,44,t),li);
       ctx.beginPath();ctx.moveTo(0,P.H+2);
-      for(var x=0;x<=P.W;x+=7){
+      for(var x=0;x<=P.W+14;x+=7){
         var y=yBase-Math.abs(P.noise(x*0.0042+r*17,r*7)-0.5)*2*amp-P.noise(x*0.021,r*3)*amp*0.35;
         ctx.lineTo(x,y);
       }
       ctx.lineTo(P.W,P.H+2);ctx.closePath();ctx.fill();
       if(P.mods.snow&&t>0.25){
         ctx.globalAlpha=0.75;ctx.fillStyle="#f4f6ff";
-        for(var x2=0;x2<=P.W;x2+=13){
+        for(var x2=0;x2<=P.W+26;x2+=13){
           var y2=yBase-Math.abs(P.noise(x2*0.0042+r*17,r*7)-0.5)*2*amp-P.noise(x2*0.021,r*3)*amp*0.35;
           if(P.noise(x2*0.05,r)>0.42) ctx.fillRect(x2,y2,10,2.4+P.rnd()*2);
         }
@@ -1313,10 +1313,12 @@ function scCity(ctx,P){
     S.push(function(){
       var t=layer,li=layer===0?(P.pal.dark?16:38):(P.pal.dark?7:20);
       var yb=layer===0?horizon:P.H*0.86,x=0;
+      if(!P._bldgs)P._bldgs=[];
       while(x<P.W){
         var bw=P.W*(0.04+P.rnd()*0.07),bh=P.H*(layer===0?0.12:0.2)*(0.6+P.rnd()*0.9)+ (layer*P.H*0.06);
         ctx.globalAlpha=1;ctx.fillStyle=hsl(P.pal.bg[1],20,li);
         ctx.fillRect(x,yb-bh,bw,bh+ (P.H-yb));
+        P._bldgs.push([x,yb-bh,bw,Math.min(bh+(P.H-yb),P.H*0.96-(yb-bh))]);
         if(P.rnd()<0.3){ctx.fillRect(x+bw*0.3,yb-bh-P.H*0.03,bw*0.12,P.H*0.03);} // antenna
         x+=bw+2;
       }
@@ -1325,7 +1327,9 @@ function scCity(ctx,P){
   var wn=Math.round(20*P.mods.density);
   for(var i=0;i<wn;i++)(function(){S.push(function(){
     for(var k=0;k<12;k++){
-      var x=P.rnd()*P.W,y=lerp(horizon*0.62,P.H*0.94,P.rnd());
+      if(!P._bldgs||!P._bldgs.length) break;
+      var B=P._bldgs[Math.floor(P.rnd()*P._bldgs.length)];
+      var x=B[0]+3+P.rnd()*Math.max(1,B[2]-6),y=B[1]+5+P.rnd()*Math.max(1,B[3]-10);
       ctx.globalAlpha=0.5+P.rnd()*0.5;
       ctx.fillStyle=P.mods.glow||P.pal.dark?pcol(P,null,66):hsl(48,80,60);
       ctx.fillRect(x,y,2.2,3.2);
@@ -1427,7 +1431,7 @@ function scMandala(ctx,P){
     ctx.fillRect(0,0,P.W,P.H);
   });
   var rings=Math.round(lerp(5,9,Math.min(1,P.mods.density)));
-  var segN=[8,10,12,16][Math.floor(P.rnd()*4)];
+  var segN=[8,10,12,16][Math.floor(P.rnd()*4)];if(P.mods.density>1.2){segN+=8;}
   for(var ring=0;ring<rings;ring++)(function(ring){
     S.push(function(){
       var r=R*(ring+1)/rings,c=pcol(P,ring,null),motif=Math.floor(P.rnd()*4);
@@ -1485,7 +1489,7 @@ function scAurora(ctx,P){
   S.push(function(){ // snowy ground
     ctx.globalAlpha=1;ctx.fillStyle=hsl(220,25,P.mods.snow?86:70);
     ctx.beginPath();ctx.moveTo(0,P.H);
-    for(var x=0;x<=P.W;x+=10)ctx.lineTo(x,P.H*0.86+P.noise(x*0.008,44)*P.H*0.05);
+    for(var x=0;x<=P.W+20;x+=10)ctx.lineTo(x,P.H*0.86+P.noise(x*0.008,44)*P.H*0.05);
     ctx.lineTo(P.W,P.H);ctx.closePath();ctx.fill();
   });
   S.push(function(){ // tree silhouettes
@@ -1519,7 +1523,7 @@ function scUnderwater(ctx,P){
   S.push(function(){ // sand
     ctx.globalAlpha=1;ctx.fillStyle=hsl(45,32,P.pal.dark?22:40);
     ctx.beginPath();ctx.moveTo(0,P.H);
-    for(var x=0;x<=P.W;x+=12)ctx.lineTo(x,P.H*0.9+P.noise(x*0.01,7)*P.H*0.05);
+    for(var x=0;x<=P.W+24;x+=12)ctx.lineTo(x,P.H*0.9+P.noise(x*0.01,7)*P.H*0.05);
     ctx.lineTo(P.W,P.H);ctx.closePath();ctx.fill();
   });
   var weeds=Math.round(12*P.mods.density);
@@ -1570,7 +1574,7 @@ function scDesert(ctx,P){
     var li=lerp(P.pal.dark?30:62,P.pal.dark?10:34,t);
     ctx.globalAlpha=1;ctx.fillStyle=hsl(34+d*5,52,li);
     ctx.beginPath();ctx.moveTo(0,P.H+2);
-    for(var x=0;x<=P.W;x+=9){
+    for(var x=0;x<=P.W+18;x+=9){
       var y=yb-P.noise(x*0.003+d*31,d*13)*P.H*0.12-Math.sin(x*0.004+d)*P.H*0.02;
       ctx.lineTo(x,y);
     }
