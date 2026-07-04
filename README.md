@@ -1,43 +1,59 @@
 # 🎨 JAMM Pad — Joint Art & Modeling Machine
 
-A retro paint studio in **one single HTML file**. No install, no account, no internet required. Draw with a **mouse, touch screen, or game controller**.
+A retro paint studio in **one single HTML file**. No install, no account, no internet required. Draw with a **mouse, touch screen, or game controller** — and let the built-in **AI Painter** create art for you, completely offline.
 
-**▶️ Use it right now:** https://jammx2.github.io/jamm-pad/
+## ⬇️ Get it (pick any — free, no signup)
 
----
+| How | Where |
+|---|---|
+| **Easiest — one-click download** | 👉 **[Download jamm-pad.html](https://github.com/JAMMx2/jamm-pad/releases/latest/download/jamm-pad.html)** 👈 then double-click the file. Done — works forever, zero internet. |
+| **Play online** (installable) | **https://jammx2.github.io/jamm-pad/** — keeps working offline after your first visit |
+| **From the live app** | Press the **Download App** button in the toolbar |
+| **Whole repo** | Green **Code** button → **Download ZIP** → open `index.html` |
 
-## ⬇️ Download (works 100% offline, forever)
+> **If the downloaded file opens in a text editor:** right-click it → **Open with** → Chrome / Edge / Firefox / Safari.
 
-Pick whichever is easiest — they all give you the same thing:
+## ✨ AI Painter — type an idea, get art (100% offline)
 
-| # | How | Steps |
-|---|-----|-------|
-| **1** | **Direct download (easiest)** | **[⬇ Click here to download jamm-pad.html](https://github.com/JAMMx2/jamm-pad/releases/latest/download/jamm-pad.html)** → double-click the downloaded file. Done. |
-| **2** | From the live app | Open the [live app](https://jammx2.github.io/jamm-pad/) → press the **Download App** button in the top toolbar. |
-| **3** | Download the whole repo | Green **Code** button (top of this page) → **Download ZIP** → unzip → double-click `index.html`. |
+Open the panel (or press the **AI Paint** button), type something like:
 
-> 💡 **That's really it.** The downloaded file is the entire app. Keep it on a USB stick, email it to someone, open it on a plane — it always works, with zero internet.
->
-> ⚠️ If double-clicking opens a text editor instead of a browser: right-click the file → **Open with** → Chrome / Edge / Firefox / Safari.
+- `sunset mountains, calm`
+- `neon city at night`
+- `galaxy with a ringed planet`
+- `pastel flower garden`
+- `aurora over snowy forest`
+- `rainbow mandala, detailed`
+
+…and watch it get **painted stroke by stroke on a new layer**. The built-in art brain understands **subjects** (mountains, ocean, forest, city, space, flowers, mandala, aurora, underwater, desert, abstract), **palettes** (warm, pastel, neon, vaporwave, ice, mono, rainbow…), **colors**, and **moods** (calm, chaotic, minimal, detailed, misty, glowing, night…).
+
+- **Variation** = same idea, brand-new take. **Surprise** = random idea.
+- Every image is unique and seeded — no internet, no APIs, no accounts, and your prompts never leave your device.
+- Results land on their own layer, so paint over, erase, or remix freely.
+
+## 📦 Import & export art
+
+- **Export .jam** — saves your whole artwork (all layers, names, opacity) as one portable file. Share it, back it up.
+- **Import** — open a `.jam` to continue where you left off, or import **any image (PNG/JPG)** as a new layer to paint over.
+- **Save PNG** — flatten and export your finished piece.
+- Quick-save projects also live in your browser via the Projects panel.
+
+## 🖌 Features
+
+Layers with opacity and reordering, radial **symmetry** (1–16) + mirror, glow / sketch / rainbow brush modes, brush styles (round, flat, marker, pixel), shape tools (line, rect, ellipse, polygon), flood fill + gradient fill, color picker, spray, select/move/copy/paste, effects (blur, pixelate, gray, sepia, lighter, darker), flip/rotate/invert, reference image underlay, **timelapse replay** of your drawing, zoom + pan, undo/redo — and full **game controller support** (draw with a PS/Xbox pad!).
+
+Press **Controls** in the app (or `H`) for every shortcut.
 
 ## 📴 How offline works
 
-- The app is **fully self-contained** — every line of code, style, and icon lives inside `index.html`. It loads nothing from the network. Ever.
-- The **hosted version** also installs a service worker, so after your first visit it keeps working with no connection — and your browser will offer to **install it as an app** (icon on desktop/home screen).
-- Artwork saves to your browser's local storage (Projects panel) and exports as PNG files.
+Everything lives in one self-contained HTML file — zero external requests, ever.
 
-## ✨ Features
+- **Downloaded copy:** works from your disk forever. AI Painter included.
+- **Online version:** a service worker caches the app on first visit, so it loads and works with no connection, and your browser will offer to **install it like an app** (icon, own window).
 
-Layers with opacity · 11 tools (Pen, Eraser, Line, Rect, Ellipse, Polygon, Fill, Gradient Fill, Color Picker, Spray, Select) · 4 brush styles · Symmetry up to 16 segments + mirror · Glow, Sketch & Rainbow modes · Zoom & pan · Reference image tracing · Timelapse replay of your drawing · Image ops (flip, rotate, invert) · Effects (blur, pixelate, grayscale, sepia) · Undo/redo · Save as PNG · Project save/load
+## 🔒 Privacy
 
-## 🎮 Controls
+No analytics, no tracking, no network calls. Art and prompts stay on your device.
 
-| Input | How |
-|---|---|
-| **Mouse** | Drag to draw · right-drag uses the R color · scroll = zoom · Space-drag = pan · `Ctrl+Z`/`Ctrl+Y` undo/redo · `[` `]` brush size · `H` help |
-| **Touch** | One finger draws · two fingers pan + pinch-zoom |
-| **Game controller** | Left stick = cursor · R2/A = draw · right stick = brush size · L1/R1 = tools · full map under **Controls** button in the app |
+## License
 
-## 📄 License
-
-[MIT](LICENSE) — free to use, copy, and modify.
+MIT © 2026 Christopher Moore
