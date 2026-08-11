@@ -32,14 +32,20 @@ Open the panel (or press the **AI Paint** button), type something like:
 
 ## 📦 Import & export art
 
-- **Export .jam** — saves your whole artwork (all layers, names, opacity) as one portable file. Share it, back it up.
+- **Export .jam** — saves your whole artwork (all layers, names, opacity, blend modes) as one portable file. Share it, back it up.
 - **Import** — open a `.jam` to continue where you left off, or import **any image (PNG/JPG)** as a new layer to paint over.
 - **Save PNG** — flatten and export your finished piece.
 - Quick-save projects also live in your browser via the Projects panel.
 
 ## 🖌 Features
 
-Layers with opacity and reordering, radial **symmetry** (1–16) + mirror, glow / sketch / rainbow brush modes, brush styles (round, flat, marker, pixel), shape tools (line, rect, ellipse, polygon), flood fill + gradient fill, color picker, spray, select/move/copy/paste, effects (blur, pixelate, gray, sepia, lighter, darker), flip/rotate/invert, reference image underlay, **timelapse replay** of your drawing, zoom + pan, undo/redo — and full **game controller support** (draw with a PS/Xbox pad!).
+Layers with opacity and reordering, **16 Photoshop-style blend modes** (multiply, screen, overlay, color dodge/burn, hue, saturation, color, luminosity…), radial **symmetry** (1–16) + mirror, glow / sketch / rainbow brush modes, brush styles (round, flat, marker, pixel), shape tools (line, rect, ellipse, polygon), flood fill + gradient fill, color picker, spray, select/move/copy/paste, effects (blur, pixelate, gray, sepia, lighter, darker), flip/rotate/invert, reference image underlay, **timelapse replay** of your drawing, zoom + pan, undo/redo — and full **game controller support** (draw with a PS/Xbox pad!).
+
+**Pro detail tools:**
+
+- **Layer blend modes** — 16 non-destructive modes per layer, saved with your `.jam`.
+- **Adjustments** — brightness, contrast, saturation, and hue on the active layer (undoable), Photoshop-style.
+- **Higher-resolution canvas** — jump from standard up to Full HD+, **2K (2560×1600)**, or a **2048² square** for real detail work; your art scales to fit.
 
 Press **Controls** in the app (or `H`) for every shortcut.
 
