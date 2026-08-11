@@ -122,6 +122,17 @@ button:focus-visible,input:focus-visible{outline:2px dashed #3e4a1d;outline-offs
 <div id="layerList"></div>
 <div class="row"><button id="dnLayer" class="mini">&#9660;</button><button id="upLayer" class="mini">&#9650;</button><button id="dupLayer" class="mini">Dup</button><button id="delLayer" class="mini">Del</button></div>
 <div class="row"><span class="lab">Opacity</span><input type="range" id="layerOpacity" min="0" max="100" value="100" aria-label="Layer opacity"></div>
+<div class="row"><span class="lab">Blend</span><select id="layerBlend" aria-label="Layer blend mode" style="flex:1;font-size:11px;background:#e9e6d8;border:1px solid #000;padding:2px">
+<option value="source-over">Normal</option><option value="multiply">Multiply</option><option value="screen">Screen</option><option value="overlay">Overlay</option><option value="darken">Darken</option><option value="lighten">Lighten</option><option value="color-dodge">Color Dodge</option><option value="color-burn">Color Burn</option><option value="hard-light">Hard Light</option><option value="soft-light">Soft Light</option><option value="difference">Difference</option><option value="exclusion">Exclusion</option><option value="hue">Hue</option><option value="saturation">Saturation</option><option value="color">Color</option><option value="luminosity">Luminosity</option></select></div>
+<div class="row"><span class="lab">Mask</span><button id="maskAdd" class="mini">Add</button><button id="maskEdit" class="act mini">Edit</button><button id="maskClear" class="mini">Clear</button><button id="maskDel" class="mini">Del</button></div>
+<div class="hintline">Non-destructive layer mask. With <b>Edit</b> on, the <b>Eraser</b> hides and any brush reveals. Saved in your <code>.jam</code>.</div>
+</div>
+<div class="sec"><h3>Text &amp; Select</h3>
+<div class="row"><select id="textFont" aria-label="Font family" style="flex:1;font-size:11px;background:#e9e6d8;border:1px solid #000;padding:2px">
+<option>Georgia</option><option>Arial</option><option>Helvetica</option><option>Times New Roman</option><option>Courier New</option><option>Verdana</option><option>Impact</option><option>Comic Sans MS</option><option>Trebuchet MS</option></select>
+<input type="number" id="textSize" min="6" max="400" value="48" title="Font size in pixels" aria-label="Font size" style="width:56px"></div>
+<div class="row"><button id="textBold" class="act mini" style="font-weight:700;width:30px">B</button><button id="textItalic" class="act mini" style="font-style:italic;width:30px">I</button><span class="lab" style="width:auto">Wand</span><input type="range" id="wandTol" min="0" max="128" value="32" aria-label="Magic wand tolerance" style="flex:1"><span class="num" id="wandTolN">32</span></div>
+<div class="hintline"><b>Text</b>: pick it, click the canvas, type, Enter to place. <b>Lasso</b>: draw a freehand loop. <b>Wand</b>: click to select matching colors.</div>
 </div>
 <div class="sec"><h3>View</h3>
 <div class="row"><button id="zoomOut" class="mini">&#8722;</button><button id="zoomFit" class="mini">Fit</button><button id="zoom100" class="mini">100%</button><button id="zoomIn" class="mini">+</button></div>
@@ -146,11 +157,21 @@ button:focus-visible,input:focus-visible{outline:2px dashed #3e4a1d;outline-offs
 <div class="row"><button id="fxLight" class="mini">Lighter</button><button id="fxDark" class="mini">Darker</button></div>
 <div class="hintline">Applies to the active layer. GFill tool sweeps Left color to Right color. Ctrl+C / Ctrl+V copy and paste a selection.</div>
 </div>
+<div class="sec"><h3>Adjust</h3>
+<div class="row"><span class="lab" style="width:52px">Bright</span><input type="range" id="adjBright" min="0" max="200" value="100" aria-label="Brightness"></div>
+<div class="row"><span class="lab" style="width:52px">Contrast</span><input type="range" id="adjContrast" min="0" max="200" value="100" aria-label="Contrast"></div>
+<div class="row"><span class="lab" style="width:52px">Satur</span><input type="range" id="adjSat" min="0" max="200" value="100" aria-label="Saturation"></div>
+<div class="row"><span class="lab" style="width:52px">Hue</span><input type="range" id="adjHue" min="-180" max="180" value="0" aria-label="Hue"></div>
+<div class="row"><button id="adjApply" class="mini" style="font-weight:700">Apply to layer</button><button id="adjReset" class="mini">Reset</button></div>
+<div class="hintline">Photoshop-style brightness, contrast, saturation &amp; hue on the active layer. Undoable.</div>
+</div>
 <div class="sec"><h3>Projects</h3>
 <div class="row"><input type="text" id="projName" placeholder="Artwork name" aria-label="Artwork name"><button id="saveProj" class="mini">Save</button></div>
 <div id="projList" style="margin-top:6px"></div>
 <div class="row"><button id="expArt" class="mini" title="Save this artwork as a portable .jam file (all layers kept)">Export .jam</button><button id="impArt" class="mini" title="Open a .jam artwork, or add any image as a new layer">Import</button></div>
 <div class="row"><button id="newDoc" class="mini">New</button><button id="clearAll" class="mini">Clear layer</button></div>
+<div class="row"><span class="lab" style="width:34px">Size</span><button class="mini szp" data-w="1280" data-h="800" title="1280 × 800">SD</button><button class="mini szp" data-w="1600" data-h="1000" title="1600 × 1000">1600</button><button class="mini szp" data-w="1920" data-h="1200" title="1920 × 1200 — Full HD+">HD</button><button class="mini szp" data-w="2560" data-h="1600" title="2560 × 1600 — high detail">2K</button><button class="mini szp" data-w="2048" data-h="2048" title="2048 × 2048 — square">▣</button></div>
+<div class="hintline">Bump the canvas up for more detail — your art scales to fit.</div>
 </div>
 </div>
 </div>
@@ -217,9 +238,52 @@ var pctx=preview.getContext("2d");
 
 function makeLayer(name){
   var c=document.createElement("canvas"); c.width=DOC_W; c.height=DOC_H;
-  return {canvas:c, ctx:c.getContext("2d"), name:name, visible:true, opacity:1};
+  return {canvas:c, ctx:c.getContext("2d"), name:name, visible:true, opacity:1, blend:"source-over", mask:null, mctx:null};
 }
 function curLayer(){ return layers[active]; }
+
+/* ---------- layer masks (non-destructive hide/reveal) ---------- */
+var maskEditing=false;
+/* Give a layer a mask (fully-visible white to start), or return the existing one. */
+function ensureMask(L){
+  if(L.mask) return L.mask;
+  var m=document.createElement("canvas"); m.width=L.canvas.width; m.height=L.canvas.height;
+  var mx=m.getContext("2d"); mx.fillStyle="#fff"; mx.fillRect(0,0,m.width,m.height);
+  L.mask=m; L.mctx=mx; return m;
+}
+/* Where paint strokes land right now: the layer, or its mask when mask-editing. */
+function activeCtx(){ return (maskEditing && curLayer().mask) ? curLayer().mctx : curLayer().ctx; }
+/* Draw a layer into ctx honouring its mask (alpha = visible). */
+function drawLayerMasked(ctx, L){
+  if(!L.mask){ ctx.drawImage(L.canvas,0,0); return; }
+  var t=maskScratch(L.canvas.width,L.canvas.height);
+  t.ctx.clearRect(0,0,t.c.width,t.c.height);
+  t.ctx.globalCompositeOperation="source-over"; t.ctx.drawImage(L.canvas,0,0);
+  t.ctx.globalCompositeOperation="destination-in"; t.ctx.drawImage(L.mask,0,0);
+  t.ctx.globalCompositeOperation="source-over";
+  ctx.drawImage(t.c,0,0);
+}
+var _mscratch=null;
+function maskScratch(w,h){
+  if(!_mscratch){ _mscratch={c:document.createElement("canvas")}; _mscratch.ctx=_mscratch.c.getContext("2d"); }
+  if(_mscratch.c.width!==w||_mscratch.c.height!==h){ _mscratch.c.width=w; _mscratch.c.height=h; }
+  return _mscratch;
+}
+/* A fresh full-size canvas of the layer with its mask baked in (for save/record/pick). */
+function maskedCanvas(L){
+  if(!L.mask) return L.canvas;
+  var t=document.createElement("canvas"); t.width=L.canvas.width; t.height=L.canvas.height;
+  var x=t.getContext("2d"); x.drawImage(L.canvas,0,0);
+  x.globalCompositeOperation="destination-in"; x.drawImage(L.mask,0,0);
+  return t;
+}
+/* A blue-tinted stencil of a selection mask, for showing the selected shape. */
+function tintFromMask(mask){
+  var t=document.createElement("canvas"); t.width=mask.width; t.height=mask.height;
+  var x=t.getContext("2d"); x.fillStyle="#3b82f6"; x.fillRect(0,0,t.width,t.height);
+  x.globalCompositeOperation="destination-in"; x.drawImage(mask,0,0);
+  return t;
+}
 
 function newDoc(w,h){
   DOC_W=w||DOC_W; DOC_H=h||DOC_H;
@@ -227,6 +291,22 @@ function newDoc(w,h){
   layers=[ makeLayer("Layer 1") ];
   active=0; undoStack=[]; redoStack=[]; frames=[]; selection=null; clipboard=null;
   renderLayerList(); fitView(); requestRender(); updateFrameN();
+}
+/* Resize the working canvas, scaling existing art up/down (keeps your work). */
+function resizeCanvas(w,h){
+  w=Math.max(64,Math.min(4096,w|0)); h=Math.max(64,Math.min(4096,h|0));
+  if(w===DOC_W&&h===DOC_H){ pill("Already "+w+"×"+h); return; }
+  commitSelection();
+  for(var i=0;i<layers.length;i++){ var L=layers[i];
+    var nc=document.createElement("canvas"); nc.width=w; nc.height=h;
+    var nx=nc.getContext("2d"); nx.imageSmoothingQuality="high";
+    nx.drawImage(L.canvas,0,0,L.canvas.width,L.canvas.height,0,0,w,h);
+    L.canvas=nc; L.ctx=nx;
+    if(L.mask){ var nm=document.createElement("canvas"); nm.width=w; nm.height=h; var nmx=nm.getContext("2d"); nmx.imageSmoothingQuality="high"; nmx.drawImage(L.mask,0,0,L.mask.width,L.mask.height,0,0,w,h); L.mask=nm; L.mctx=nmx; }
+  }
+  DOC_W=w; DOC_H=h; preview.width=w; preview.height=h;
+  undoStack=[]; redoStack=[]; selection=null;
+  renderLayerList(); fitView(); requestRender(); pill("Canvas "+w+" × "+h);
 }
 
 /* ---------- view (zoom / pan) ---------- */
@@ -281,18 +361,31 @@ function render(){
   for(var i=0;i<layers.length;i++){
     var L=layers[i]; if(!L.visible) continue;
     bctx.globalAlpha=L.opacity;
-    bctx.drawImage(L.canvas,0,0);
-    if(i===active && previewActive){ bctx.drawImage(preview,0,0); }
-    bctx.globalAlpha=1;
+    bctx.globalCompositeOperation=L.blend||"source-over";
+    drawLayerMasked(bctx,L);
+    if(i===active && previewActive){ bctx.globalCompositeOperation="source-over"; bctx.drawImage(preview,0,0); }
+    bctx.globalAlpha=1; bctx.globalCompositeOperation="source-over";
   }
   // selection marquee
   if(selection){
     bctx.save();
+    if(selection.mask){
+      if(!selection._tint) selection._tint=tintFromMask(selection.mask);
+      bctx.globalAlpha=0.28; bctx.drawImage(selection._tint, selection.x, selection.y); bctx.globalAlpha=1;
+    }
     bctx.lineWidth=1/view.scale; bctx.strokeStyle="#000";
     bctx.setLineDash([4/view.scale,3/view.scale]);
     bctx.strokeRect(selection.x,selection.y,selection.w,selection.h);
     if(selection.float){ bctx.drawImage(selection.float,selection.x,selection.y); }
     bctx.restore();
+  }
+  // lasso in progress
+  if(lassoActive && lassoPath.length){
+    bctx.save(); bctx.strokeStyle="#3b82f6"; bctx.lineWidth=1.5/view.scale;
+    bctx.setLineDash([5/view.scale,3/view.scale]);
+    bctx.beginPath(); bctx.moveTo(lassoPath[0].x,lassoPath[0].y);
+    for(var q=1;q<lassoPath.length;q++) bctx.lineTo(lassoPath[q].x,lassoPath[q].y);
+    bctx.stroke(); bctx.restore();
   }
   // polygon in-progress
   if(poly.length){
@@ -315,7 +408,7 @@ function render(){
 }
 
 /* ---------- tools & brush state ---------- */
-var TOOLS=["Pen","Eraser","Line","Rect","Ellipse","Polygon","Fill","GFill","Pick","Spray","Select"];
+var TOOLS=["Pen","Eraser","Line","Rect","Ellipse","Polygon","Fill","GFill","Pick","Spray","Text","Lasso","Wand","Select"];
 var STYLES=["Round","Flat","Marker","Pixel"];
 var tool="Pen", style="Round";
 var sizeV=8, flowV=1, segV=1, mirror=false, glow=false, sketch=false, rainbow=false;
@@ -371,7 +464,9 @@ function nextColor(){
 var undoStack=[], redoStack=[], UNDO_MAX=50;
 function snapshot(){
   try{
-    return {layer:active, data:curLayer().ctx.getImageData(0,0,DOC_W,DOC_H)};
+    var m=maskEditing && curLayer().mask;
+    var t=m?curLayer().mctx:curLayer().ctx;
+    return {layer:active, mask:!!m, data:t.getImageData(0,0,DOC_W,DOC_H)};
   }catch(e){ return null; }
 }
 function pushUndo(){
@@ -379,20 +474,23 @@ function pushUndo(){
   undoStack.push(s); if(undoStack.length>UNDO_MAX) undoStack.shift();
   redoStack.length=0;
 }
+function undoTarget(L,s){ if(s.mask){ ensureMask(L); return L.mctx; } return L.ctx; }
 function undo(){
   if(!undoStack.length){ pill("Nothing to undo"); return; }
   var s=undoStack.pop();
   var L=layers[s.layer]||curLayer();
-  redoStack.push({layer:s.layer, data:L.ctx.getImageData(0,0,DOC_W,DOC_H)});
-  L.ctx.putImageData(s.data,0,0);
+  var t=undoTarget(L,s);
+  redoStack.push({layer:s.layer, mask:s.mask, data:t.getImageData(0,0,DOC_W,DOC_H)});
+  t.putImageData(s.data,0,0);
   active=s.layer; renderLayerList(); requestRender();
 }
 function redo(){
   if(!redoStack.length){ pill("Nothing to redo"); return; }
   var s=redoStack.pop();
   var L=layers[s.layer]||curLayer();
-  undoStack.push({layer:s.layer, data:L.ctx.getImageData(0,0,DOC_W,DOC_H)});
-  L.ctx.putImageData(s.data,0,0);
+  var t=undoTarget(L,s);
+  undoStack.push({layer:s.layer, mask:s.mask, data:t.getImageData(0,0,DOC_W,DOC_H)});
+  t.putImageData(s.data,0,0);
   active=s.layer; renderLayerList(); requestRender();
 }
 
@@ -506,52 +604,65 @@ var drawing=false, lastDoc=null, previewActive=false, startDoc=null;
 var spaceDown=false, panning=false, panStart=null;
 var poly=[], polyHover=null;
 var selection=null, clipboard=null, selDragging=false, selOff=null;
+var lassoPath=[], lassoActive=false, wandTol=32;
+var textFont="Georgia", textSize=48, textBold=false, textItalic=false;
 
+function insideSel(doc){ return selection && doc.x>=selection.x && doc.x<=selection.x+selection.w && doc.y>=selection.y && doc.y<=selection.y+selection.h; }
+function startSelDrag(doc){ selDragging=true; selOff={x:doc.x-selection.x, y:doc.y-selection.y}; if(!selection.float) liftSelection(); }
 function beginStroke(doc, rightBtn){
   pushUndo();
   drawing=true; lastDoc=doc; startDoc=doc;
   var useCol = rightBtn? color2: strokeColor();
+  var tctx=activeCtx();
   if(tool==="Pen"||tool==="Eraser"){
-    symPoints(doc).forEach(function(p){ stampDot(curLayer().ctx,p,useCol); });
+    symPoints(doc).forEach(function(p){ stampDot(tctx,p,useCol); });
   } else if(tool==="Spray"){
-    symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,useCol); });
+    symPoints(doc).forEach(function(p){ sprayAt(tctx,p,useCol); });
   } else if(tool==="Fill"){
-    floodFill(curLayer().ctx, doc.x, doc.y, useCol); endStroke();
+    floodFill(tctx, doc.x, doc.y, useCol); endStroke();
   } else if(tool==="Pick"){
     pickColor(doc); drawing=false; undoStack.pop();
+  } else if(tool==="Text"){
+    drawing=false; undoStack.pop(); placeTextInput(doc);
   } else if(["Line","Rect","Ellipse","GFill"].indexOf(tool)>=0){
     previewActive=true;
   } else if(tool==="Polygon"){
     drawing=false; undoStack.pop();
     poly.push(doc); requestRender();
+  } else if(tool==="Lasso"){
+    drawing=false; undoStack.pop();
+    if(insideSel(doc)){ startSelDrag(doc); }
+    else { commitSelection(); lassoPath=[doc]; lassoActive=true; }
+  } else if(tool==="Wand"){
+    drawing=false; undoStack.pop();
+    if(insideSel(doc)){ startSelDrag(doc); }
+    else { commitSelection(); buildWandSelection(doc); }
   } else if(tool==="Select"){
-    if(selection && doc.x>=selection.x && doc.x<=selection.x+selection.w && doc.y>=selection.y && doc.y<=selection.y+selection.h){
-      selDragging=true; selOff={x:doc.x-selection.x, y:doc.y-selection.y};
-      if(!selection.float) liftSelection();
-    } else {
-      commitSelection(); selection={x:doc.x,y:doc.y,w:0,h:0,float:null}; selDragging=false; startDoc=doc;
-    }
+    if(insideSel(doc)){ startSelDrag(doc); }
+    else { commitSelection(); selection={x:doc.x,y:doc.y,w:0,h:0,float:null}; selDragging=false; startDoc=doc; }
     undoStack.pop();
   }
   requestRender();
 }
 function moveStroke(doc, rightBtn){
-  if(tool==="Select"){
-    if(selDragging && selection){ selection.x=doc.x-selOff.x; selection.y=doc.y-selOff.y; requestRender(); }
-    else if(selection && startDoc){
+  if(tool==="Select"||tool==="Lasso"||tool==="Wand"){
+    if(selDragging && selection){ selection.x=doc.x-selOff.x; selection.y=doc.y-selOff.y; requestRender(); return; }
+    if(tool==="Select" && selection && startDoc && !selection.mask){
       selection.x=Math.min(startDoc.x,doc.x); selection.y=Math.min(startDoc.y,doc.y);
-      selection.w=Math.abs(doc.x-startDoc.x); selection.h=Math.abs(doc.y-startDoc.y); requestRender();
+      selection.w=Math.abs(doc.x-startDoc.x); selection.h=Math.abs(doc.y-startDoc.y); requestRender(); return;
     }
+    if(tool==="Lasso" && lassoActive){ lassoPath.push(doc); requestRender(); return; }
     return;
   }
   if(!drawing) return;
   var useCol = rightBtn? color2: strokeColor();
+  var tctx=activeCtx();
   if(tool==="Pen"||tool==="Eraser"){
     var A=symPoints(lastDoc), B=symPoints(doc);
-    for(var i=0;i<A.length;i++) drawSeg(curLayer().ctx,A[i],B[i],useCol);
+    for(var i=0;i<A.length;i++) drawSeg(tctx,A[i],B[i],useCol);
     lastDoc=doc;
   } else if(tool==="Spray"){
-    symPoints(doc).forEach(function(p){ sprayAt(curLayer().ctx,p,useCol); }); lastDoc=doc;
+    symPoints(doc).forEach(function(p){ sprayAt(tctx,p,useCol); }); lastDoc=doc;
   } else if(previewActive){
     pctx.clearRect(0,0,DOC_W,DOC_H);
     drawShape(pctx, startDoc, doc, useCol, true);
@@ -559,9 +670,13 @@ function moveStroke(doc, rightBtn){
   requestRender();
 }
 function endStroke(rightBtn){
-  if(tool==="Select"){ selDragging=false; return; }
+  if(tool==="Select"||tool==="Wand"){ selDragging=false; return; }
+  if(tool==="Lasso"){
+    if(lassoActive){ lassoActive=false; buildLassoSelection(lassoPath); lassoPath=[]; }
+    selDragging=false; return;
+  }
   if(previewActive){
-    drawShape(curLayer().ctx, startDoc, lastHover||startDoc, rightBtn?color2:strokeColor(), false);
+    drawShape(activeCtx(), startDoc, lastHover||startDoc, rightBtn?color2:strokeColor(), false);
     pctx.clearRect(0,0,DOC_W,DOC_H); previewActive=false;
   }
   if(drawing){ recordFrame(); }
@@ -602,7 +717,7 @@ function pickColor(doc){
   // sample composite
   var tmp=document.createElement("canvas"); tmp.width=1; tmp.height=1; var tc=tmp.getContext("2d");
   tc.fillStyle="#fff"; tc.fillRect(0,0,1,1);
-  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; tc.globalAlpha=layers[i].opacity; tc.drawImage(layers[i].canvas,-x,-y); }
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; tc.globalAlpha=layers[i].opacity; tc.drawImage(maskedCanvas(layers[i]),-x,-y); }
   var d=tc.getImageData(0,0,1,1).data;
   var hex="#"+[d[0],d[1],d[2]].map(function(v){return ("0"+v.toString(16)).slice(-2);}).join("");
   setColor1(hex); pill("Picked "+hex);
@@ -611,10 +726,16 @@ function pickColor(doc){
 /* ---------- selection helpers ---------- */
 function liftSelection(){
   if(!selection||selection.w<1||selection.h<1) return;
-  var fc=document.createElement("canvas"); fc.width=Math.round(selection.w); fc.height=Math.round(selection.h);
-  fc.getContext("2d").drawImage(curLayer().canvas, selection.x, selection.y, selection.w, selection.h, 0,0, selection.w, selection.h);
+  var w=Math.round(selection.w), h=Math.round(selection.h);
+  var fc=document.createElement("canvas"); fc.width=w; fc.height=h; var fx=fc.getContext("2d");
+  fx.drawImage(curLayer().canvas, selection.x, selection.y, w, h, 0,0, w, h);
+  if(selection.mask){ fx.globalCompositeOperation="destination-in"; fx.drawImage(selection.mask,0,0); fx.globalCompositeOperation="source-over"; }
   pushUndo();
-  curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  if(selection.mask){
+    var lc=curLayer().ctx; lc.save(); lc.globalCompositeOperation="destination-out"; lc.drawImage(selection.mask, selection.x, selection.y); lc.restore();
+  } else {
+    curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  }
   selection.float=fc;
 }
 function commitSelection(){
@@ -627,14 +748,96 @@ function commitSelection(){
 function deleteSelection(){
   if(!selection) return;
   pushUndo();
-  if(!selection.float) curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  if(!selection.float){
+    if(selection.mask){ var lc=curLayer().ctx; lc.save(); lc.globalCompositeOperation="destination-out"; lc.drawImage(selection.mask, selection.x, selection.y); lc.restore(); }
+    else curLayer().ctx.clearRect(selection.x,selection.y,selection.w,selection.h);
+  }
   selection=null; recordFrame(); requestRender();
 }
 function copySelection(){
   if(!selection) return;
-  var fc=document.createElement("canvas"); fc.width=Math.max(1,Math.round(selection.w)); fc.height=Math.max(1,Math.round(selection.h));
-  fc.getContext("2d").drawImage(selection.float||curLayer().canvas, selection.float?0:selection.x, selection.float?0:selection.y, selection.w,selection.h, 0,0,selection.w,selection.h);
+  var w=Math.max(1,Math.round(selection.w)), h=Math.max(1,Math.round(selection.h));
+  var fc=document.createElement("canvas"); fc.width=w; fc.height=h; var fx=fc.getContext("2d");
+  if(selection.float){ fx.drawImage(selection.float,0,0); }
+  else {
+    fx.drawImage(curLayer().canvas, selection.x, selection.y, w, h, 0,0, w, h);
+    if(selection.mask){ fx.globalCompositeOperation="destination-in"; fx.drawImage(selection.mask,0,0); fx.globalCompositeOperation="source-over"; }
+  }
   clipboard=fc; pill("Copied");
+}
+/* ---------- lasso + magic-wand selection builders ---------- */
+function buildLassoSelection(path){
+  if(!path||path.length<3){ selection=null; requestRender(); return; }
+  var minx=Infinity,miny=Infinity,maxx=-Infinity,maxy=-Infinity;
+  for(var i=0;i<path.length;i++){ var p=path[i]; if(p.x<minx)minx=p.x; if(p.y<miny)miny=p.y; if(p.x>maxx)maxx=p.x; if(p.y>maxy)maxy=p.y; }
+  minx=Math.max(0,Math.floor(minx)); miny=Math.max(0,Math.floor(miny));
+  maxx=Math.min(DOC_W,Math.ceil(maxx)); maxy=Math.min(DOC_H,Math.ceil(maxy));
+  var w=Math.max(1,maxx-minx), h=Math.max(1,maxy-miny);
+  var m=document.createElement("canvas"); m.width=w; m.height=h; var mx=m.getContext("2d");
+  mx.fillStyle="#fff"; mx.beginPath(); mx.moveTo(path[0].x-minx, path[0].y-miny);
+  for(var j=1;j<path.length;j++) mx.lineTo(path[j].x-minx, path[j].y-miny);
+  mx.closePath(); mx.fill();
+  selection={x:minx,y:miny,w:w,h:h,float:null,mask:m};
+  requestRender(); pill("Lasso selection — drag inside to move, Delete to cut, Ctrl+C to copy");
+}
+function buildWandSelection(doc){
+  var x=Math.floor(doc.x), y=Math.floor(doc.y);
+  if(x<0||y<0||x>=DOC_W||y>=DOC_H){ selection=null; return; }
+  var src=curLayer().ctx.getImageData(0,0,DOC_W,DOC_H), d=src.data;
+  var idx=(y*DOC_W+x)*4, tr=d[idx],tg=d[idx+1],tb=d[idx+2],ta=d[idx+3];
+  var tol=wandTol;
+  function match(i){ return Math.abs(d[i]-tr)<=tol&&Math.abs(d[i+1]-tg)<=tol&&Math.abs(d[i+2]-tb)<=tol&&Math.abs(d[i+3]-ta)<=tol; }
+  var sel=new Uint8Array(DOC_W*DOC_H);
+  var stack=[[x,y]], minx=x,miny=y,maxx=x,maxy=y;
+  while(stack.length){
+    var pt=stack.pop(), px=pt[0], py=pt[1];
+    if(px<0||py<0||px>=DOC_W||py>=DOC_H) continue;
+    var si=py*DOC_W+px; if(sel[si]) continue;
+    if(!match(si*4)) continue;
+    sel[si]=1;
+    if(px<minx)minx=px; if(px>maxx)maxx=px; if(py<miny)miny=py; if(py>maxy)maxy=py;
+    stack.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
+  }
+  var w=maxx-minx+1, h=maxy-miny+1;
+  var m=document.createElement("canvas"); m.width=w; m.height=h; var mx=m.getContext("2d");
+  var mimg=mx.createImageData(w,h), md=mimg.data;
+  for(var yy=0;yy<h;yy++) for(var xx=0;xx<w;xx++){ if(sel[(yy+miny)*DOC_W+(xx+minx)]){ var o=(yy*w+xx)*4; md[o]=255;md[o+1]=255;md[o+2]=255;md[o+3]=255; } }
+  mx.putImageData(mimg,0,0);
+  selection={x:minx,y:miny,w:w,h:h,float:null,mask:m};
+  requestRender(); pill("Magic-wand selection (tolerance "+wandTol+") — drag to move, Delete to cut");
+}
+/* ---------- text tool (click to place editable text) ---------- */
+function placeTextInput(doc){
+  var stageEl=$("#stage");
+  var inp=document.createElement("input"); inp.type="text"; inp.value="";
+  inp.setAttribute("aria-label","Type text, Enter to place");
+  var sx=view.x+doc.x*view.scale, sy=view.y+doc.y*view.scale;
+  var px=Math.max(6, textSize*view.scale);
+  inp.style.cssText="position:absolute;left:"+sx+"px;top:"+sy+"px;z-index:50;background:rgba(255,255,255,.82);"+
+    "border:1px dashed #000;color:"+color1+";font-family:"+textFont+";font-size:"+px+"px;"+
+    "font-weight:"+(textBold?"bold":"normal")+";font-style:"+(textItalic?"italic":"normal")+";padding:0 2px;min-width:60px;outline:none;line-height:1.1;";
+  stageEl.appendChild(inp);
+  setTimeout(function(){ inp.focus(); }, 0);
+  var done=false;
+  function commit(){
+    if(done) return; done=true;
+    var txt=inp.value; inp.remove();
+    if(txt && txt.length){
+      pushUndo();
+      var ctx=curLayer().ctx; ctx.save();
+      ctx.fillStyle=color1; ctx.textBaseline="top";
+      ctx.font=(textItalic?"italic ":"")+(textBold?"bold ":"")+textSize+"px "+textFont;
+      ctx.fillText(txt, doc.x, doc.y);
+      ctx.restore(); recordFrame(); requestRender();
+      pill("Text placed on <b>"+curLayer().name+"</b>");
+    }
+  }
+  inp.addEventListener("keydown",function(e){
+    e.stopPropagation();
+    if(e.key==="Enter"){ e.preventDefault(); commit(); }
+    else if(e.key==="Escape"){ done=true; inp.remove(); }
+  });
+  inp.addEventListener("blur", commit);
 }
 function pasteClipboard(){
   if(!clipboard){ pill("Clipboard empty"); return; }
@@ -654,6 +857,19 @@ function fxSepia(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ va
 function fxInvert(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=255-d[i]; d[i+1]=255-d[i+1]; d[i+2]=255-d[i+2]; } }); }
 function fxLight(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=Math.min(255,d[i]+24); d[i+1]=Math.min(255,d[i+1]+24); d[i+2]=Math.min(255,d[i+2]+24);} }); }
 function fxDark(){ withLayerImage(function(d){ for(var i=0;i<d.length;i+=4){ d[i]=Math.max(0,d[i]-24); d[i+1]=Math.max(0,d[i+1]-24); d[i+2]=Math.max(0,d[i+2]-24);} }); }
+/* Non-destructive-style adjustments (brightness/contrast/saturation/hue) baked into the active layer. */
+function fxAdjust(b,c,s,h){
+  b=(b==null?100:b); c=(c==null?100:c); s=(s==null?100:s); h=(h==null?0:h);
+  if(b===100&&c===100&&s===100&&h===0){ pill("No adjustment"); return; }
+  pushUndo();
+  var ctx=curLayer().ctx;
+  var tmp=document.createElement("canvas"); tmp.width=DOC_W; tmp.height=DOC_H;
+  var t=tmp.getContext("2d");
+  t.filter="brightness("+(b/100)+") contrast("+(c/100)+") saturate("+(s/100)+") hue-rotate("+h+"deg)";
+  t.drawImage(curLayer().canvas,0,0);
+  ctx.clearRect(0,0,DOC_W,DOC_H); ctx.filter="none"; ctx.drawImage(tmp,0,0);
+  recordFrame(); requestRender(); pill("Adjustment applied");
+}
 function fxBlur(){
   pushUndo();
   var ctx=curLayer().ctx;
@@ -691,20 +907,44 @@ function renderLayerList(){
       var row=document.createElement("div"); row.className="layer"+(i===active?" sel":"");
       var vis=document.createElement("div"); vis.className="vis"; vis.textContent=L.visible?"◉":"◯";
       vis.onclick=function(e){ e.stopPropagation(); L.visible=!L.visible; renderLayerList(); requestRender(); };
-      var nm=document.createElement("div"); nm.className="nm"; nm.textContent=L.name;
+      var nm=document.createElement("div"); nm.className="nm"; nm.textContent=L.name+(L.mask?"  ▦":"");
       nm.ondblclick=function(e){ e.stopPropagation(); var n=prompt("Layer name",L.name); if(n){ L.name=n; renderLayerList(); } };
       var th=document.createElement("div"); th.className="th";
       try{ th.style.backgroundImage="url("+L.canvas.toDataURL()+")"; }catch(e){}
       row.appendChild(vis); row.appendChild(nm); row.appendChild(th);
-      row.onclick=function(){ commitSelection(); active=i; $("#layerOpacity").value=Math.round(L.opacity*100); renderLayerList(); requestRender(); };
+      row.onclick=function(){ commitSelection(); active=i; if(maskEditing&&!L.mask){ maskEditing=false; var mb=$("#maskEdit"); if(mb) mb.classList.remove("on"); } $("#layerOpacity").value=Math.round(L.opacity*100); var lb=$("#layerBlend"); if(lb) lb.value=L.blend||"source-over"; renderLayerList(); requestRender(); };
       w.appendChild(row);
     })(i);
   }
+  var cl=curLayer(); if(cl){ var lo=$("#layerOpacity"); if(lo) lo.value=Math.round(cl.opacity*100); var lb=$("#layerBlend"); if(lb) lb.value=cl.blend||"source-over"; }
 }
 function addLayer(){ commitSelection(); layers.splice(active+1,0,makeLayer("Layer "+(layers.length+1))); active++; renderLayerList(); requestRender(); }
-function dupLayer(){ commitSelection(); var L=makeLayer(curLayer().name+" copy"); L.ctx.drawImage(curLayer().canvas,0,0); L.opacity=curLayer().opacity; layers.splice(active+1,0,L); active++; renderLayerList(); requestRender(); }
+function dupLayer(){ commitSelection(); var src=curLayer(); var L=makeLayer(src.name+" copy"); L.ctx.drawImage(src.canvas,0,0); L.opacity=src.opacity; L.blend=src.blend; if(src.mask){ ensureMask(L); L.mctx.clearRect(0,0,L.mask.width,L.mask.height); L.mctx.drawImage(src.mask,0,0); } layers.splice(active+1,0,L); active++; renderLayerList(); requestRender(); }
 function delLayer(){ if(layers.length<=1){ pill("Need at least one layer"); return; } layers.splice(active,1); active=Math.max(0,active-1); renderLayerList(); requestRender(); }
 function moveLayer(dir){ var ni=active+dir; if(ni<0||ni>=layers.length) return; var t=layers[active]; layers[active]=layers[ni]; layers[ni]=t; active=ni; renderLayerList(); requestRender(); }
+/* ---------- layer mask ops ---------- */
+function addMask(){ ensureMask(curLayer()); renderLayerList(); requestRender(); pill("Mask added — turn on <b>Edit</b>, then Eraser hides / brush reveals"); }
+function toggleMaskEdit(){
+  if(!curLayer().mask) ensureMask(curLayer());
+  maskEditing=!maskEditing;
+  $("#maskEdit").classList.toggle("on",maskEditing);
+  renderLayerList();
+  pill(maskEditing?"Editing <b>mask</b> — Eraser hides, any brush reveals":"Editing <b>layer</b> content");
+}
+function clearMask(){
+  if(!curLayer().mask){ pill("No mask on this layer"); return; }
+  var m=curLayer().mask;
+  undoStack.push({layer:active, mask:true, data:curLayer().mctx.getImageData(0,0,m.width,m.height)});
+  if(undoStack.length>UNDO_MAX) undoStack.shift(); redoStack.length=0;
+  curLayer().mctx.fillStyle="#fff"; curLayer().mctx.fillRect(0,0,m.width,m.height);
+  requestRender(); pill("Mask cleared — layer fully visible");
+}
+function delMask(){
+  if(!curLayer().mask){ pill("No mask to remove"); return; }
+  curLayer().mask=null; curLayer().mctx=null;
+  if(maskEditing){ maskEditing=false; var mb=$("#maskEdit"); if(mb) mb.classList.remove("on"); }
+  renderLayerList(); requestRender(); pill("Mask removed");
+}
 
 /* ---------- reference ---------- */
 var refImg=null, refShow=true, refOpacity=0.55;
@@ -720,7 +960,7 @@ function recordFrame(){
   if(!recOn) return;
   var c=document.createElement("canvas"); c.width=Math.round(DOC_W/3); c.height=Math.round(DOC_H/3);
   var x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height);
-  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.drawImage(layers[i].canvas,0,0,c.width,c.height); }
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.globalCompositeOperation=layers[i].blend||"source-over"; x.drawImage(maskedCanvas(layers[i]),0,0,c.width,c.height); } x.globalCompositeOperation="source-over";
   frames.push(c); updateFrameN();
 }
 function updateFrameN(){ $("#frameN").textContent=frames.length; }
@@ -744,7 +984,7 @@ function playReplay(){
 function flatten(){
   var c=document.createElement("canvas"); c.width=DOC_W; c.height=DOC_H; var x=c.getContext("2d");
   x.fillStyle="#fff"; x.fillRect(0,0,DOC_W,DOC_H);
-  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.drawImage(layers[i].canvas,0,0); }
+  for(var i=0;i<layers.length;i++){ if(!layers[i].visible) continue; x.globalAlpha=layers[i].opacity; x.globalCompositeOperation=layers[i].blend||"source-over"; x.drawImage(maskedCanvas(layers[i]),0,0); } x.globalCompositeOperation="source-over";
   return c;
 }
 function savePNG(){
@@ -761,7 +1001,7 @@ function saveProject(){
   var name=$("#projName").value||("Artwork "+new Date().toLocaleString());
   var p=getProjects();
   var rec={ name:name, w:DOC_W, h:DOC_H, thumb:flatten().toDataURL("image/png"),
-    layers:layers.map(function(L){ return {name:L.name,visible:L.visible,opacity:L.opacity,data:L.canvas.toDataURL("image/png")}; }) };
+    layers:layers.map(function(L){ return {name:L.name,visible:L.visible,opacity:L.opacity,blend:L.blend,data:L.canvas.toDataURL("image/png"),mask:L.mask?L.mask.toDataURL("image/png"):null}; }) };
   var ex=p.findIndex(function(q){return q.name===name;});
   if(ex>=0) p[ex]=rec; else p.push(rec);
   setProjects(p); renderProjects(); pill("Project saved: "+name);
@@ -782,10 +1022,15 @@ function renderProjects(){
 }
 function loadProject(rec){
   DOC_W=rec.w; DOC_H=rec.h; preview.width=DOC_W; preview.height=DOC_H;
-  layers=[]; var pending=rec.layers.length;
+  layers=[];
+  var pending=0;
+  rec.layers.forEach(function(ld){ pending+= 1 + (ld.mask?1:0); });
+  if(!pending) pending=1;
+  function fin(){ if(--pending<=0){ active=0; undoStack=[];redoStack=[];frames=[];selection=null; maskEditing=false; var mb=$("#maskEdit"); if(mb) mb.classList.remove("on"); renderLayerList(); fitView(); requestRender(); updateFrameN(); } }
   rec.layers.forEach(function(ld,i){
-    var L=makeLayer(ld.name); L.visible=ld.visible; L.opacity=ld.opacity; layers[i]=L;
-    var im=new Image(); im.onload=function(){ L.ctx.drawImage(im,0,0); if(--pending===0){ active=0; undoStack=[];redoStack=[];frames=[];selection=null; renderLayerList(); fitView(); requestRender(); updateFrameN(); } }; im.src=ld.data;
+    var L=makeLayer(ld.name); L.visible=ld.visible; L.opacity=ld.opacity; L.blend=ld.blend||"source-over"; layers[i]=L;
+    var im=new Image(); im.onload=function(){ L.ctx.drawImage(im,0,0); fin(); }; im.onerror=fin; im.src=ld.data;
+    if(ld.mask){ var mm=new Image(); mm.onload=function(){ var m=ensureMask(L); L.mctx.clearRect(0,0,m.width,m.height); L.mctx.drawImage(mm,0,0); fin(); }; mm.onerror=fin; mm.src=ld.mask; }
   });
   $("#projName").value=rec.name; pill("Loaded "+rec.name);
 }
@@ -891,7 +1136,17 @@ $("#color2").oninput=function(){ color2=this.value; };
 /* layers */
 $("#addLayer").onclick=addLayer; $("#dupLayer").onclick=dupLayer; $("#delLayer").onclick=delLayer;
 $("#upLayer").onclick=function(){ moveLayer(1); }; $("#dnLayer").onclick=function(){ moveLayer(-1); };
+$("#maskAdd").onclick=addMask; $("#maskEdit").onclick=toggleMaskEdit; $("#maskClear").onclick=clearMask; $("#maskDel").onclick=delMask;
+$("#textFont").onchange=function(){ textFont=this.value; pill("Font: "+textFont); };
+$("#textSize").oninput=function(){ textSize=Math.max(6,Math.min(400,+this.value||48)); };
+$("#textBold").onclick=function(){ textBold=!textBold; this.classList.toggle("on",textBold); pill("Bold "+(textBold?"on":"off")); };
+$("#textItalic").onclick=function(){ textItalic=!textItalic; this.classList.toggle("on",textItalic); pill("Italic "+(textItalic?"on":"off")); };
+$("#wandTol").oninput=function(){ wandTol=+this.value; $("#wandTolN").textContent=this.value; };
 $("#layerOpacity").oninput=function(){ curLayer().opacity=(+this.value)/100; renderLayerList(); requestRender(); };
+$("#layerBlend").onchange=function(){ curLayer().blend=this.value; requestRender(); pill("Blend: "+this.options[this.selectedIndex].text); };
+$("#adjApply").onclick=function(){ fxAdjust(+$("#adjBright").value,+$("#adjContrast").value,+$("#adjSat").value,+$("#adjHue").value); };
+$("#adjReset").onclick=function(){ $("#adjBright").value=100; $("#adjContrast").value=100; $("#adjSat").value=100; $("#adjHue").value=0; pill("Adjust reset"); };
+Array.prototype.forEach.call(document.querySelectorAll(".szp"),function(b){ b.onclick=function(){ resizeCanvas(+b.dataset.w,+b.dataset.h); }; });
 
 /* view */
 $("#zoomIn").onclick=function(){ setScale(view.scale*1.2); };
@@ -1031,6 +1286,19 @@ function makeNoise(seed){
 }
 function lerp(a,b,t){return a+(b-a)*t;}
 function hsl(h,s,l,a){return "hsla("+(((h%360)+360)%360)+","+Math.max(0,Math.min(100,s))+"%,"+Math.max(0,Math.min(100,l))+"%,"+(a==null?1:a)+")";}
+/* Fine grain/texture finishing pass — adds crisp detail flecks following the noise field. */
+function aiDetailPass(S,ctx,P){
+  var n=Math.round(70*P.mods.density), done=0, batch=22;
+  while(done<n){ (function(cnt){ S.push(function(){
+    for(var k=0;k<cnt;k++){
+      var x=P.rnd()*P.W, y=P.rnd()*P.H, nz=P.noise(x/85,y/85);
+      ctx.globalAlpha=0.045+P.rnd()*0.06;
+      ctx.fillStyle=(nz>0.5)?"rgba(255,255,255,1)":"rgba(0,0,0,1)";
+      var s=0.6+P.rnd()*1.3; ctx.fillRect(x,y,s,s);
+    }
+    ctx.globalAlpha=1;
+  }); })(Math.min(batch,n-done)); done+=batch; }
+}
 
 var PALS={
   warm:{hues:[0,18,32,45],sat:[70,95],lit:[45,62],bg:[26,8,74,40]},
@@ -1051,7 +1319,7 @@ var COLORW={red:0,crimson:352,orange:25,amber:40,yellow:55,lime:90,green:125,eme
 
 var SURPRISE=["sunset mountains, calm","neon city at night","pastel flower garden","galaxy with a ringed planet","aurora over snowy forest","warm desert dunes at dusk","underwater coral reef, colorful fish","rainbow mandala, detailed","stormy ocean waves","misty pine forest at dawn","chaotic neon abstract, glow","golden wheat meadow, minimal","ice mountains under stars","vaporwave skyline","night ocean with full moon","fire nebula, detailed"];
 
-var aiBusy=false, aiLastPrompt="", aiVarN=0;
+var aiBusy=false, aiLastPrompt="", aiVarN=0, AI_DETAIL=1.35;
 
 function aiParse(t){
   var words=t.toLowerCase().replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(Boolean);
@@ -1071,6 +1339,7 @@ function aiParse(t){
     density:has("detailed","dense","intricate","busy","complex")?1.6:(has("minimal","simple","clean","sparse")?0.55:1),
     chaos:has("chaotic","wild","crazy","messy","energetic")?1.7:(has("calm","peaceful","serene","gentle","smooth")?0.6:1)
   };
+  mods.density*=AI_DETAIL;   // global detail boost — denser, sharper scenes
   var palName=null,i;
   for(i=0;i<words.length&&!palName;i++) palName=PALSYN[words[i]]||null;
   var colorHue=null;
@@ -1110,7 +1379,7 @@ function pcol(P,i,l,a){
   return hsl(h,s,li,a==null?1:a);
 }
 function skySteps(S,ctx,P,yTo){
-  var bands=30,i;
+  var bands=46,i;   // finer gradient banding for smoother, higher-detail skies
   for(i=0;i<bands;i++)(function(i){S.push(function(){
     var t=i/(bands-1),y=t*yTo,bh=yTo/bands;
     var h=lerp(P.pal.bg[0],P.pal.bg[1],t),li=lerp(P.pal.bg[2],P.pal.bg[3],t);
@@ -1657,6 +1926,7 @@ function aiGenerate(prompt,seedShift){
   var L=makeLayer("AI: "+(prompt.length>16?prompt.slice(0,16)+"…":prompt));
   layers.splice(active+1,0,L); active++; renderLayerList();
   var steps=parsed.gen(L.ctx,P);
+  aiDetailPass(steps,L.ctx,P);
   var gBtn=$("#aiGen"),i=0;
   gBtn.disabled=true; gBtn.textContent="Painting…"; gBtn.setAttribute("aria-busy","true");
   pill("Painting <b>"+prompt+"</b>…");
@@ -1678,7 +1948,7 @@ function aiGenerate(prompt,seedShift){
 function exportJam(){
   var name=($("#projName").value||"artwork").replace(/[^\w\- ]+/g,"").trim()||"artwork";
   var rec={app:"jamm-pad",v:1,name:name,w:DOC_W,h:DOC_H,
-    layers:layers.map(function(L){return {name:L.name,visible:L.visible,opacity:L.opacity,data:L.canvas.toDataURL("image/png")};})};
+    layers:layers.map(function(L){return {name:L.name,visible:L.visible,opacity:L.opacity,blend:L.blend,data:L.canvas.toDataURL("image/png"),mask:L.mask?L.mask.toDataURL("image/png"):null};})};
   var a=document.createElement("a");
   a.download=name.replace(/\s+/g,"_")+".jam";
   a.href=URL.createObjectURL(new Blob([JSON.stringify(rec)],{type:"application/json"}));
