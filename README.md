@@ -23,8 +23,11 @@ Open the panel (or press the **AI Paint** button), type something like:
 - `pastel flower garden`
 - `aurora over snowy forest`
 - `rainbow mandala, detailed`
+- `erupting volcano at night`
+- `snowy village, glowing windows`
+- `pastel hot air balloons at sunrise`
 
-…and watch it get **painted stroke by stroke on a new layer**. The built-in art brain understands **subjects** (mountains, ocean, forest, city, space, flowers, mandala, aurora, underwater, desert, abstract), **palettes** (warm, pastel, neon, vaporwave, ice, mono, rainbow…), **colors**, and **moods** (calm, chaotic, minimal, detailed, misty, glowing, night…).
+…and watch it get **painted stroke by stroke on a new layer**. The built-in art brain understands **subjects** (mountains, ocean, forest, city, village, volcano, balloons, space, flowers, mandala, aurora, underwater, desert, abstract), **palettes** (warm, pastel, neon, vaporwave, ice, mono, rainbow…), **colors**, and **moods** (calm, chaotic, minimal, detailed, misty, glowing, night…).
 
 - **Variation** = same idea, brand-new take. **Surprise** = random idea.
 - Every image is unique and seeded — no internet, no APIs, no accounts, and your prompts never leave your device.
@@ -32,14 +35,27 @@ Open the panel (or press the **AI Paint** button), type something like:
 
 ## 📦 Import & export art
 
-- **Export .jam** — saves your whole artwork (all layers, names, opacity) as one portable file. Share it, back it up.
+- **Export .jam** — saves your whole artwork (all frames, all layers, names, opacity, fps) as one portable file. Share it, back it up. v1.1 `.jam` files still open.
 - **Import** — open a `.jam` to continue where you left off, or import **any image (PNG/JPG)** as a new layer to paint over.
-- **Save PNG** — flatten and export your finished piece.
+- **Save PNG** — flatten and export at **1x, 2x or 4x** (crisp nearest-neighbour scaling), with or without the white paper (**Transparent**).
+- **Export GIF** — every animation frame as a looping animated GIF, encoded in-page (no libraries, no upload).
+- **Sprite sheet** — all frames side by side in one PNG, at the same 1x/2x/4x scale.
+- **Autosave** — your work is written to the browser (IndexedDB) a few seconds after each change. A **Restore autosave** button appears in the Projects panel next time you open the app.
 - Quick-save projects also live in your browser via the Projects panel.
 
 ## 🖌 Features
 
-Layers with opacity and reordering, radial **symmetry** (1–16) + mirror, glow / sketch / rainbow brush modes, brush styles (round, flat, marker, pixel), shape tools (line, rect, ellipse, polygon), flood fill + gradient fill, color picker, spray, select/move/copy/paste, effects (blur, pixelate, gray, sepia, lighter, darker), flip/rotate/invert, reference image underlay, **timelapse replay** of your drawing, zoom + pan, undo/redo — and full **game controller support** (draw with a PS/Xbox pad!).
+- **Animation** — frames with their own layers, duplicate / blank / delete, onion skin of the previous frame, play/stop at 1–24 fps, GIF + sprite-sheet export. `,` and `.` step frames.
+- **Layers** with opacity, visibility and reordering.
+- **Tools**: pen, eraser, line, rect, ellipse, polygon, flood fill (with a **tolerance** slider), gradient fill, color picker, spray, select / move / copy / paste, and a **Text** tool (Sans / Serif / Mono, bold).
+- **Pixel-art mode** — toggle **Pixel grid**: a grid overlay plus snapping for every tool, with clean whole-cell shapes and lines (2–32 px cells).
+- **Pen pressure** — stylus pressure drives brush size (PointerEvent pressure; toggle in Tool options).
+- **Palette editor** — add / remove swatches, reset, and **import / export GIMP `.gpl` or plain `.hex`** lists. Your palette is remembered on the device.
+- Radial **symmetry** (1–16) + mirror, glow / sketch / rainbow brush modes, brush styles (round, flat, marker, pixel).
+- Effects (blur, pixelate, gray, sepia, lighter, darker), flip / rotate / invert, reference image underlay, **timelapse replay**, zoom + pan.
+- Undo / redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z) that survives adding, deleting and reordering layers.
+- Single-key tool shortcuts (`P E L R O Y F G I A M T`), `X` swaps colors, `Esc` cancels.
+- Full **game controller support** (draw with a PS/Xbox pad).
 
 Press **Controls** in the app (or `H`) for every shortcut.
 

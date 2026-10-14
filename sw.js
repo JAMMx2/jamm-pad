@@ -1,5 +1,5 @@
 /* JAMM Pad service worker — makes the hosted app work fully offline */
-var CACHE = "jamm-pad-v2";
+var CACHE = "jamm-pad-v3";
 var ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {
